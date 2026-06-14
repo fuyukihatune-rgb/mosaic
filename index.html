@@ -370,6 +370,7 @@ const APP_VERSION = "1.6.0";
 const VERSION_KEY = "mosaic_version";
 // 今回のバージョンで新しくなったところ（アップデート画面に出ます）
 const WHATS_NEW = [
+  "「使い方ガイド」を追加しました（設定からいつでも開けます）",
   "兄弟アプリ「Shift」から人格を取り込めるようにしました（はじめの画面でも案内します）",
   "兄弟アプリ「Shift」へ人格を引き継ぐ書き出し機能を追加しました",
   "見た目をやさしく・読みやすく整えました",
@@ -543,6 +544,11 @@ function render() {
     app.innerHTML = renderTerms(true);
     return;
   }
+  // 設定から使い方を開いたとき
+  if (showHelpView) {
+    app.innerHTML = renderHelp();
+    return;
+  }
   // 既存ユーザーがアップデートした直後は「更新しました」画面を出す
   if (updateInfo) {
     app.innerHTML = renderUpdateScreen();
@@ -594,6 +600,7 @@ let searchQuery = '';
 let showTermsView = false;
 let updateInfo = null; // 既存ユーザーが更新したとき { from, to } が入る
 let showCodeImport = false; // 初期起動でコード取り込み画面を出しているとき true
+let showHelpView = false; // 設定から使い方を開いているとき true
 let composeImages = []; // 投稿前に添付した画像（data URL）の一時置き場
 const _now = new Date();
 let calYear = _now.getFullYear();
@@ -661,6 +668,39 @@ function agreeTerms() {
 }
 function viewTerms() { showTermsView = true; render(); }
 function closeTerms() { showTermsView = false; render(); }
+
+// ── 使い方ガイド ───────────────────────────────────────────────────────────────
+function renderHelp() {
+  return `
+  <div class="main"><div class="terms-root"><div class="terms-inner">
+    <div class="setup-header"><div class="setup-logo">Mosaic</div>
+    <div class="setup-tagline">使い方ガイド</div></div>
+    <div class="terms-card">
+      <div class="terms-title">Mosaicの使い方</div>
+      <div class="terms-sub">「何があったか」を、人格ごとにやさしく書きとめるメモアプリです。</div>
+      <div class="terms-scroll">
+        <div class="terms-h">📝 タイムライン</div>
+        <p class="terms-p">いまの気持ちやできごとを投稿します。だれの投稿かを人格から選び、気分や写真もいっしょに残せます。投稿は新しいものから時系列で並びます。</p>
+        <div class="terms-h">📅 カレンダー</div>
+        <p class="terms-p">日付をタップすると、その日の投稿を振り返れます。</p>
+        <div class="terms-h">👤 人格</div>
+        <p class="terms-p">人格の追加・編集ができます。名前・色・役割のほか、アイコン画像も設定できます。ID（英数字）は空欄でもOK（自動でつきます）。</p>
+        <div class="terms-h">📊 統計</div>
+        <p class="terms-p">投稿の数や気分の傾向を、ゆるやかに振り返れます。</p>
+        <div class="terms-h">🔍 検索・メンション</div>
+        <p class="terms-p">本文や人格名で検索できます。投稿のとき、他の人格や全体に「メンション・周知」もできます。</p>
+        <div class="terms-h">🔄 Shiftと人格を引き継ぐ</div>
+        <p class="terms-p">兄弟アプリShift（いまのフロント管理）と人格リストを共有できます。設定の「Shiftへ引き継ぐ／Shiftから取り込む」で<strong>引き継ぎコード</strong>をコピー＆貼り付けすると移せます。</p>
+        <div class="terms-h">🔒 データについて</div>
+        <p class="terms-p">記録はすべてこの端末の中だけに保存されます。サーバーには送りません。アプリやブラウザのデータを消すと記録も消えるので、大切な内容は別にも控えておいてください。</p>
+      </div>
+      <button class="btn-primary" style="margin-top:16px" onclick="closeHelp()">閉じる</button>
+    </div>
+    <div class="setup-note">いつでも設定から開けます</div>
+  </div></div></div>`;
+}
+function openHelp() { showHelpView = true; render(); }
+function closeHelp() { showHelpView = false; render(); }
 
 // ── UPDATE NOTICE ────────────────────────────────────────────────────────────
 // 前回開いたときのバージョンと比べて、更新されていれば updateInfo をセット
@@ -1574,6 +1614,12 @@ function renderSettings() {
       <div class="settings-desc">Mosaicは「Ataraxia Works」がつくる道具のひとつです。今フロントにいる人格の管理や申し送りには、兄弟アプリ「Shift」を使えます。</div>
       <a class="btn-secondary" style="display:block;text-align:center;text-decoration:none;width:100%;margin-bottom:8px" href="https://shift.xdcyw.net" target="_blank" rel="noopener">Shift を開く →</a>
       <a class="btn-ghost" style="display:block;text-align:center;text-decoration:none;width:100%" href="https://apps.xdcyw.net" target="_blank" rel="noopener">Ataraxia Works について</a>
+    </div>
+
+    <div class="card settings-section">
+      <div class="settings-label">使い方</div>
+      <div class="settings-desc">タイムライン・人格・検索・引き継ぎのやり方を見られます。</div>
+      <button class="btn-secondary" style="width:100%" onclick="openHelp()">使い方を見る</button>
     </div>
 
     <div class="card settings-section">
