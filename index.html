@@ -211,6 +211,64 @@
     .toast { position: fixed; bottom: calc(20px + var(--safe-bottom)); left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; padding: 10px 20px; border-radius: 6px; font-size: 13px; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 999; white-space: nowrap; }
     .toast.show { opacity: 1; }
 
+    /* ── Terms / Privacy ── */
+    .terms-root { min-height: 100%; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .terms-inner { width: 100%; max-width: 440px; }
+    .terms-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px; }
+    .terms-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .terms-sub { font-size: 13px; color: var(--text-3); margin-bottom: 18px; }
+    .terms-scroll { max-height: 46vh; overflow-y: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border-light); border-radius: 8px; padding: 14px; background: #fafafa; }
+    .terms-h { font-size: 14px; font-weight: 700; margin: 14px 0 6px; }
+    .terms-h:first-child { margin-top: 0; }
+    .terms-p { font-size: 13px; line-height: 1.8; color: var(--text-2); }
+    .terms-list { font-size: 13px; line-height: 1.8; color: var(--text-2); padding-left: 18px; }
+
+    /* ── Mention ── */
+    .mention-bar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    .mention-bar-label { font-size: 11px; color: var(--text-4); margin-right: 2px; }
+    .mention-chip { border: 1px solid var(--border); background: #fafafa; border-radius: 16px; padding: 3px 10px; font-size: 12px; color: var(--text-2); cursor: pointer; white-space: nowrap; }
+    .mention-chip:active { background: #eee; }
+    .mention { font-weight: 600; border-radius: 4px; padding: 0 3px; }
+    .mention-all { color: #c0704a; background: #c0704a18; }
+    .announce-badge { font-size: 11px; font-weight: 600; color: #c0704a; background: #c0704a14; border-radius: 4px; padding: 2px 7px; }
+
+    /* ── Developer / Donation ── */
+    .dev-msg { font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 12px; }
+    .dev-links { display: flex; flex-direction: column; gap: 8px; }
+    .dev-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text); text-decoration: none; border: 1px solid var(--border); border-radius: 6px; padding: 9px 12px; }
+    .eth-box { background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; font-size: 12px; font-family: ui-monospace, "SF Mono", Menlo, monospace; word-break: break-all; line-height: 1.6; color: var(--text-2); margin-bottom: 10px; }
+    .donate-block { margin-bottom: 16px; }
+    .donate-block:last-of-type { margin-bottom: 0; }
+    .donate-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+
+    /* ── Search ── */
+    .search-bar { position: relative; margin-bottom: 10px; }
+    .search-input { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px 34px 10px 36px; font-size: 16px; background: var(--surface); color: var(--text); outline: none; }
+    .search-input:focus { border-color: #aaa; }
+    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--text-4); pointer-events: none; }
+    .search-clear { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-3); font-size: 18px; cursor: pointer; padding: 2px 6px; line-height: 1; }
+    .search-count { font-size: 12px; color: var(--text-3); margin-bottom: 8px; }
+
+    /* ── Calendar ── */
+    .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .cal-title { font-size: 15px; font-weight: 700; }
+    .cal-nav { background: none; border: 1px solid var(--border); border-radius: 6px; width: 34px; height: 34px; font-size: 15px; color: var(--text-2); cursor: pointer; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .cal-dow { text-align: center; font-size: 11px; color: var(--text-3); padding: 4px 0; }
+    .cal-dow.sun { color: #c0704a; }
+    .cal-dow.sat { color: #4f7cac; }
+    .cal-cell { aspect-ratio: 1 / 1; border: 1px solid var(--border-light); border-radius: 8px; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 4px 2px; cursor: pointer; position: relative; transition: border-color 0.1s; }
+    .cal-cell.empty { border: none; background: none; cursor: default; }
+    .cal-cell.has-posts { border-color: var(--border); }
+    .cal-cell.today { border-color: var(--text); }
+    .cal-cell.selected { border-color: var(--text); background: #1a1a1a0a; border-width: 2px; }
+    .cal-daynum { font-size: 12px; color: var(--text-2); }
+    .cal-cell.today .cal-daynum { font-weight: 700; color: var(--text); }
+    .cal-dots { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; margin-top: 3px; }
+    .cal-dot { width: 5px; height: 5px; border-radius: 50%; }
+    .cal-more { font-size: 9px; color: var(--text-4); }
+    .cal-selected-head { font-size: 14px; font-weight: 600; margin: 18px 0 10px; }
+
     /* ── Responsive ── */
     @media (max-width: 400px) {
       .stats-grid { grid-template-columns: 1fr 1fr; }
@@ -237,12 +295,50 @@ const MOODS = [
 ];
 const STORAGE_KEY = "mosaic_v1";
 
+// ── 開発者情報・寄付設定 ──────────────────────────────────────────────────────
+// ↓↓↓ ここを自分の情報に書き換えてください ↓↓↓
+const DEV_INFO = {
+  name: "田中志（たなかしるす）",
+  message: "このアプリは個人が作っています。やさしい気持ちで使ってもらえたら嬉しいです。",
+  links: [
+    { label: "X（Twitter）", url: "https://x.com/Sirusu_Tanaka" },
+  ],
+};
+// 寄付を受け取るアドレス。address が空のものは画面に表示されません。
+const DONATIONS = [
+  { key: "btc", label: "ビットコイン（BTC）", address: "1EHshWSHyvJFjkAYQ5rPX7nKo2FRKWF58f" },
+  { key: "eth", label: "イーサリアム（ETH）", address: "0xb7da6af09c0f8db95d0c0e352e32d1915483931e" },
+];
+// ↑↑↑ ここまで ↑↑↑
+function activeDonations() {
+  return DONATIONS.filter(d => d.address && d.address.trim());
+}
+
+// 規約・プライバシーの内容を変えたら数字を1つ増やすと、もう一度同意画面が出ます
+const TERMS_VERSION = 1;
+// 全体メンション（周知）に使える言葉
+const ALL_MENTION_WORDS = ["全体", "みんな", "ぜんいん"];
+
+// ── アプリのバージョン ────────────────────────────────────────────────────────
+// 更新するたびに数字を上げる。sw.js の CACHE_NAME も合わせて変えること。
+const APP_VERSION = "1.2.0";
+const VERSION_KEY = "mosaic_version";
+// 今回のバージョンで新しくなったところ（アップデート画面に出ます）
+const WHATS_NEW = [
+  "「アルター」の表記を「人格」に変えました",
+  "投稿や人格名で探せる検索を追加しました",
+  "カレンダーから、その日の投稿を見られるようにしました",
+  "他の人格や全体へ「メンション・周知」できるようにしました",
+  "開発者情報と、寄付（BTC・ETH）の画面を追加しました",
+];
+
 // ── State ────────────────────────────────────────────────────────────────────
 let state = {
   initialized: false,
   systemName: "",
   alters: [],
   posts: [],
+  agreedTermsVersion: 0,
 };
 
 function loadState() {
@@ -325,6 +421,21 @@ function isInStandaloneMode() { return window.matchMedia('(display-mode: standal
 // ── Render ───────────────────────────────────────────────────────────────────
 function render() {
   const app = document.getElementById('app');
+  // 初回起動：まだ規約に同意していなければ規約画面を出す
+  if ((state.agreedTermsVersion || 0) < TERMS_VERSION) {
+    app.innerHTML = renderTerms(false);
+    return;
+  }
+  // 設定からあとで読み返すとき
+  if (showTermsView) {
+    app.innerHTML = renderTerms(true);
+    return;
+  }
+  // 既存ユーザーがアップデートした直後は「更新しました」画面を出す
+  if (updateInfo) {
+    app.innerHTML = renderUpdateScreen();
+    return;
+  }
   if (!state.initialized) {
     app.innerHTML = renderSetup();
     bindSetup();
@@ -338,12 +449,125 @@ function render() {
 let currentTab = 'timeline';
 let filterAlterId = 'all';
 let filterMood = 'all';
+let filterMention = false;
+let searchQuery = '';
+let showTermsView = false;
+let updateInfo = null; // 既存ユーザーが更新したとき { from, to } が入る
+const _now = new Date();
+let calYear = _now.getFullYear();
+let calMonth = _now.getMonth(); // 0-11
+let calSelectedKey = null;      // "YYYY-M-D"
 let editingPostId = null;
 let showAlterForm = false;
 let editingAlterId = null;
 let setupStep = 1;
 let setupData = { systemName:'', alterName:'', alterHandle:'', alterColor: PALETTE[0], alterRole:'' };
 let expandedDateId = null;
+
+// ── TERMS / PRIVACY ──────────────────────────────────────────────────────────
+function renderTermsBody() {
+  return `
+    <div class="terms-h">このアプリについて</div>
+    <p class="terms-p">Mosaic（モザイク）は、システムのみんなが気持ちや出来事を書きとめておくためのメモアプリです。</p>
+
+    <div class="terms-h">あなたのデータについて</div>
+    <ul class="terms-list">
+      <li>書いた内容や人格の情報は、すべて<strong>この端末の中だけ</strong>に保存されます。</li>
+      <li>外部のサーバーには送りません。インターネット通信もしません。</li>
+      <li>だれか他の人に勝手に見られることはありません。</li>
+      <li>アプリやブラウザのデータを消すと、メモも消えます。大切な内容は別にも控えておいてください。</li>
+    </ul>
+
+    <div class="terms-h">使うときのお願い</div>
+    <ul class="terms-list">
+      <li>このアプリは<strong>医療の道具ではありません</strong>。診断や治療の代わりにはなりません。</li>
+      <li>つらいときは、信頼できる人や専門の窓口にも頼ってください。</li>
+      <li>このアプリを使ったことで起きたことについて、作者は責任を負えないことをご理解ください。</li>
+    </ul>
+
+    <div class="terms-h">無料です</div>
+    <p class="terms-p">このアプリは無料で使えます。応援したい人だけ、設定画面から寄付ができます（任意です）。</p>`;
+}
+
+function renderTerms(viewOnly) {
+  return `
+  <div class="main">
+    <div class="terms-root">
+      <div class="terms-inner">
+        <div class="setup-header">
+          <div class="setup-logo">Mosaic</div>
+          <div class="setup-tagline">はじめる前に読んでください</div>
+        </div>
+        <div class="terms-card">
+          <div class="terms-title">プライバシーと規約</div>
+          <div class="terms-sub">かんたんに言うと「データはこの端末の中だけ」です。</div>
+          <div class="terms-scroll">${renderTermsBody()}</div>
+          ${viewOnly
+            ? `<button class="btn-primary" style="margin-top:16px" onclick="closeTerms()">閉じる</button>`
+            : `<button class="btn-primary" style="margin-top:16px" onclick="agreeTerms()">読みました・同意して始める</button>`}
+        </div>
+        <div class="setup-note">同意すると、この内容に納得したことになります</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function agreeTerms() {
+  state.agreedTermsVersion = TERMS_VERSION;
+  saveState();
+  render();
+}
+function viewTerms() { showTermsView = true; render(); }
+function closeTerms() { showTermsView = false; render(); }
+
+// ── UPDATE NOTICE ────────────────────────────────────────────────────────────
+// 前回開いたときのバージョンと比べて、更新されていれば updateInfo をセット
+function checkVersion() {
+  let prev = null;
+  try { prev = localStorage.getItem(VERSION_KEY); } catch {}
+  if (prev && prev !== APP_VERSION) {
+    // バージョンが変わった既存ユーザー
+    updateInfo = { from: prev, to: APP_VERSION };
+  } else if (!prev && state.initialized) {
+    // バージョン記録が無いが、すでにデータがある人
+    // （今回からバージョン管理を始めたため、初回だけ案内を出す）
+    updateInfo = { from: null, to: APP_VERSION };
+  }
+  try { localStorage.setItem(VERSION_KEY, APP_VERSION); } catch {}
+}
+
+function renderUpdateScreen() {
+  return `
+  <div class="main">
+    <div class="terms-root">
+      <div class="terms-inner">
+        <div class="setup-header">
+          <div class="setup-logo">Mosaic</div>
+          <div class="setup-tagline">アップデートしました 🎉</div>
+        </div>
+        <div class="terms-card">
+          <div class="terms-title">新しくなりました</div>
+          <div class="terms-sub">${updateInfo.from ? `バージョン ${escHtml(updateInfo.from)} → ${escHtml(updateInfo.to)}` : `最新版（${escHtml(updateInfo.to)}）になりました`}</div>
+          <div class="terms-scroll">
+            <div class="terms-h">新しくなったところ</div>
+            <ul class="terms-list">
+              ${WHATS_NEW.map(x=>`<li>${escHtml(x)}</li>`).join('')}
+            </ul>
+            <div class="terms-h">データはそのままです</div>
+            <p class="terms-p">これまでの投稿や人格の情報はそのまま残っています。安心して使ってください。</p>
+          </div>
+          <button class="btn-primary" style="margin-top:16px" onclick="dismissUpdate()">続ける</button>
+        </div>
+        <div class="setup-note">古いデータは自動で新しい形に引き継がれます</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function dismissUpdate() {
+  updateInfo = null;
+  render();
+}
 
 // ── SETUP ────────────────────────────────────────────────────────────────────
 function renderSetup() {
@@ -378,8 +602,8 @@ function renderSetupStep1() {
 
 function renderSetupStep2() {
   return `
-    <div class="field-label">最初のアルターを登録</div>
-    <div class="field-desc">今これを読んでいるあなた、または<br>代表的なアルターを登録しよう。</div>
+    <div class="field-label">最初の人格を登録</div>
+    <div class="field-desc">今これを読んでいるあなた、または<br>代表的な人格を登録しよう。</div>
     <div class="input-stack">
       <input type="text" id="setup-altername" placeholder="名前（例：ホスト、守護者…）" value="${escHtml(setupData.alterName)}" maxlength="20" />
       <input type="text" id="setup-alterhandle" placeholder="ハンドル（英数字・_）" value="${escHtml(setupData.alterHandle)}" maxlength="20" />
@@ -465,7 +689,8 @@ function renderApp() {
       <span class="nav-title">${escHtml(state.systemName)}</span>
       <div class="nav-tabs">
         <button class="nav-tab" data-tab="timeline">タイムライン</button>
-        <button class="nav-tab" data-tab="alters">アルター</button>
+        <button class="nav-tab" data-tab="calendar">カレンダー</button>
+        <button class="nav-tab" data-tab="alters">人格</button>
         <button class="nav-tab" data-tab="stats">統計</button>
         <button class="nav-tab" data-tab="settings">設定</button>
       </div>
@@ -483,6 +708,7 @@ function renderApp() {
     <div class="main">
       <div class="content">
         <div class="tab-panel" id="tab-timeline">${renderTimeline()}</div>
+        <div class="tab-panel" id="tab-calendar">${renderCalendar()}</div>
         <div class="tab-panel" id="tab-alters">${renderAlters()}</div>
         <div class="tab-panel" id="tab-stats">${renderStats()}</div>
         <div class="tab-panel" id="tab-settings">${renderSettings()}</div>
@@ -503,15 +729,44 @@ function switchTab(tab) {
   currentTab = tab;
   document.querySelectorAll('.nav-tab').forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id===`tab-${tab}`));
+  // 投稿後に切り替えても最新の内容を見せるため、その都度作り直す
+  if (tab==='calendar') refreshCalendar();
+  if (tab==='stats') { const s=document.getElementById('tab-stats'); if (s) s.innerHTML = renderStats(); }
 }
 
 // ── TIMELINE ─────────────────────────────────────────────────────────────────
-function renderTimeline() {
-  const alter = state.alters.find(a=>a.id===activeAlterId()) || state.alters[0];
-  const filtered = [...state.posts]
+function filteredPosts() {
+  const q = searchQuery.trim().toLowerCase();
+  return [...state.posts]
     .filter(p => filterAlterId==='all' || p.alterId===filterAlterId)
     .filter(p => filterMood==='all' || p.mood===filterMood)
+    .filter(p => !filterMention || mentionsActive(p))
+    .filter(p => !q || postMatchesQuery(p, q))
     .sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+}
+
+// 検索：本文・人格名・ハンドルにヒット
+function postMatchesQuery(p, q) {
+  if (String(p.content||'').toLowerCase().includes(q)) return true;
+  const a = state.alters.find(x=>x.id===p.alterId);
+  if (a && ((a.name||'').toLowerCase().includes(q) || (a.handle||'').toLowerCase().includes(q))) return true;
+  return false;
+}
+
+function renderPostsList() {
+  const filtered = filteredPosts();
+  const q = searchQuery.trim();
+  if (filtered.length === 0) {
+    const msg = state.posts.length===0 ? '最初の投稿をしてみよう。'
+      : q ? `「${escHtml(q)}」に一致する投稿はありません。` : '該当する投稿はありません。';
+    return `<div class="empty">${msg}</div>`;
+  }
+  const countLine = q ? `<div class="search-count">${filtered.length} 件見つかりました</div>` : '';
+  return countLine + filtered.map(p=>renderPost(p)).join('');
+}
+
+function renderTimeline() {
+  const alter = state.alters.find(a=>a.id===activeAlterId()) || state.alters[0];
 
   return `
     <div class="card compose-card">
@@ -526,8 +781,14 @@ function renderTimeline() {
       <div class="compose-row">
         ${alter ? avatarHTML(alter,38) : ''}
         <textarea class="compose-textarea" id="compose-text"
-          placeholder="${alter?`${escHtml(alter.name)} として書く…`:'アルターを選んでください'}"
+          placeholder="${alter?`${escHtml(alter.name)} として書く…`:'人格を選んでください'}"
           rows="3"></textarea>
+      </div>
+      <div class="mention-bar" id="mention-bar">
+        <span class="mention-bar-label">宛先</span>
+        <button class="mention-chip" onclick="insertMention('@全体')">📢 全体に周知</button>
+        ${state.alters.filter(a=>a.id!==activeAlterId()).map(a=>`
+          <button class="mention-chip" onclick="insertMention('@${escHtml(a.handle)}')">@${escHtml(a.handle)}</button>`).join('')}
       </div>
       <div class="compose-footer">
         <select class="mood-select" id="compose-mood">
@@ -535,6 +796,13 @@ function renderTimeline() {
         </select>
         <button class="post-btn" id="post-btn" disabled onclick="submitPost()">投稿</button>
       </div>
+    </div>
+
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="post-search" placeholder="投稿・人格名で検索…"
+        value="${escHtml(searchQuery)}" oninput="applySearch(this.value)" />
+      <button class="search-clear" id="search-clear" onclick="clearSearch()" style="display:${searchQuery?'block':'none'}">×</button>
     </div>
 
     <div class="pill-row">
@@ -554,18 +822,24 @@ function renderTimeline() {
           ${m.emoji}
         </div>`).join('')}
     </div>
+    <div class="pill-row">
+      <div class="pill ${filterMention?'active':''}" onclick="toggleMentionFilter()"
+           style="${filterMention?'border-color:#c0704a;background:#c0704a14;color:#c0704a;font-weight:600':''}">
+        🔔 ${alter?escHtml(alter.name):'自分'} 宛て・周知だけ
+      </div>
+    </div>
 
-    ${filtered.length===0
-      ? `<div class="empty">${state.posts.length===0?'最初の投稿をしてみよう。':'該当する投稿はありません。'}</div>`
-      : filtered.map(p=>renderPost(p)).join('')}`;
+    <div id="timeline-posts">${renderPostsList()}</div>`;
 }
 
-function renderPost(post) {
+function renderPost(post, opts={}) {
+  const readOnly = !!opts.readOnly;
   const alter = state.alters.find(a=>a.id===post.alterId);
   if (!alter) return '';
   const mood = MOODS.find(m=>m.value===post.mood);
-  const isEditing = editingPostId===post.id;
+  const isEditing = !readOnly && editingPostId===post.id;
   const showFull = expandedDateId===post.id;
+  const isAnnounce = hasAllMention(post.content);
   return `
     <div class="card accent" style="border-left-color:${alter.color}" id="post-${post.id}">
       <div class="post-header">
@@ -576,7 +850,9 @@ function renderPost(post) {
             <span class="alter-handle">@${escHtml(alter.handle)}</span>
           </div>
         </div>
-        <span class="post-time" onclick="toggleDate('${post.id}')">${showFull?formatDate(post.timestamp):timeAgo(post.timestamp)}</span>
+        ${readOnly
+          ? `<span class="post-time">${formatDate(post.timestamp)}</span>`
+          : `<span class="post-time" onclick="toggleDate('${post.id}')">${showFull?formatDate(post.timestamp):timeAgo(post.timestamp)}</span>`}
       </div>
       ${isEditing ? `
         <div class="edit-area">
@@ -586,10 +862,11 @@ function renderPost(post) {
             <button class="edit-cancel" onclick="cancelEdit()">キャンセル</button>
           </div>
         </div>` : `
-        <p class="post-body">${escHtml(post.content)}</p>`}
+        <p class="post-body">${renderContentWithMentions(post.content)}</p>`}
       <div class="post-footer">
+        ${isAnnounce?`<span class="announce-badge">📢 周知</span>`:''}
         <span class="mood-badge">${mood?mood.emoji+' '+mood.label:''}</span>
-        ${!isEditing?`
+        ${!isEditing && !readOnly?`
         <div class="post-actions">
           <button class="action-btn" onclick="startEdit('${post.id}')">編集</button>
           <button class="action-btn" onclick="deletePost('${post.id}')">削除</button>
@@ -618,6 +895,60 @@ function selectAlter(id) {
 
 function setFilterAlter(id) { filterAlterId = id; refreshTimeline(); }
 function setFilterMood(v) { filterMood = v; refreshTimeline(); }
+function toggleMentionFilter() { filterMention = !filterMention; refreshTimeline(); }
+
+// 検索：入力中は投稿リストだけ更新してフォーカスを保つ
+function applySearch(val) {
+  searchQuery = val;
+  const list = document.getElementById('timeline-posts');
+  if (list) list.innerHTML = renderPostsList();
+  const clr = document.getElementById('search-clear');
+  if (clr) clr.style.display = val ? 'block' : 'none';
+}
+function clearSearch() {
+  searchQuery = '';
+  refreshTimeline();
+  document.getElementById('post-search')?.focus();
+}
+
+// ── Mentions ─────────────────────────────────────────────────────────────────
+// 投稿文に「@全体」など全体メンションが含まれているか
+function hasAllMention(content) {
+  const words = ALL_MENTION_WORDS.map(w => '@'+w).join('|');
+  return new RegExp('(?:^|[^A-Za-z0-9_])(?:'+words+')').test(String(content||''));
+}
+// いま選んでいる人格に宛てられた投稿か（@自分のハンドル または 全体メンション）
+function mentionsActive(post) {
+  if (hasAllMention(post.content)) return true;
+  const me = state.alters.find(a=>a.id===activeAlterId());
+  if (!me) return false;
+  return new RegExp('@'+me.handle+'(?![a-z0-9_])').test(String(post.content||''));
+}
+// 投稿文をエスケープしつつ、メンション部分に色をつける
+function renderContentWithMentions(content) {
+  let html = escHtml(content);
+  // 既存の人格ハンドルへのメンション
+  html = html.replace(/@([a-z0-9_]+)/g, (m, h) => {
+    const a = state.alters.find(x=>x.handle===h);
+    if (!a) return m;
+    return `<span class="mention" style="color:${a.color};background:${a.color}18">@${h}</span>`;
+  });
+  // 全体メンション（@全体 / @みんな / @ぜんいん）
+  const allWords = ALL_MENTION_WORDS.join('|');
+  html = html.replace(new RegExp('@('+allWords+')', 'g'), '<span class="mention mention-all">@$1</span>');
+  return html;
+}
+// メンションのトークンを入力欄に差し込む
+function insertMention(token) {
+  const ta = document.getElementById('compose-text');
+  if (!ta) return;
+  const cur = ta.value;
+  const needsSpace = cur && !/\s$/.test(cur);
+  ta.value = cur + (needsSpace ? ' ' : '') + token + ' ';
+  ta.focus();
+  const btn = document.getElementById('post-btn');
+  if (btn) btn.disabled = !ta.value.trim();
+}
 
 function refreshTimeline() {
   const panel = document.getElementById('tab-timeline');
@@ -670,13 +1001,110 @@ function toggleDate(id) {
   refreshTimeline();
 }
 
+// ── CALENDAR ─────────────────────────────────────────────────────────────────
+function dateKey(d) {
+  const dt = new Date(d);
+  return `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`;
+}
+
+// その月の各日ごとの投稿をまとめる： key → [posts]
+function postsByDayInMonth(year, month) {
+  const map = {};
+  state.posts.forEach(p => {
+    const dt = new Date(p.timestamp);
+    if (dt.getFullYear()===year && dt.getMonth()===month) {
+      const k = dateKey(dt);
+      (map[k] = map[k] || []).push(p);
+    }
+  });
+  return map;
+}
+
+function renderCalendar() {
+  const DOW = ['日','月','火','水','木','金','土'];
+  const first = new Date(calYear, calMonth, 1);
+  const startDow = first.getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const byDay = postsByDayInMonth(calYear, calMonth);
+  const todayKey = dateKey(new Date());
+
+  let cells = '';
+  for (let i=0; i<startDow; i++) cells += `<div class="cal-cell empty"></div>`;
+  for (let day=1; day<=daysInMonth; day++) {
+    const k = `${calYear}-${calMonth+1}-${day}`;
+    const posts = byDay[k] || [];
+    const classes = ['cal-cell'];
+    if (posts.length) classes.push('has-posts');
+    if (k===todayKey) classes.push('today');
+    if (k===calSelectedKey) classes.push('selected');
+    // 投稿した人格の色のドット（最大3つ＋それ以上は +N）
+    const colors = [...new Set(posts.map(p=>{
+      const a = state.alters.find(x=>x.id===p.alterId); return a?a.color:'#bbb';
+    }))];
+    const dots = colors.slice(0,3).map(c=>`<span class="cal-dot" style="background:${c}"></span>`).join('');
+    const more = colors.length>3 ? `<span class="cal-more">+${colors.length-3}</span>` : '';
+    cells += `
+      <div class="${classes.join(' ')}" onclick="selectCalDay('${k}')">
+        <span class="cal-daynum">${day}</span>
+        ${posts.length?`<div class="cal-dots">${dots}${more}</div>`:''}
+      </div>`;
+  }
+
+  return `
+    <div class="cal-head">
+      <button class="cal-nav" onclick="calPrevMonth()">◀</button>
+      <div class="cal-title">${calYear}年 ${calMonth+1}月</div>
+      <button class="cal-nav" onclick="calNextMonth()">▶</button>
+    </div>
+    <div class="cal-grid">
+      ${DOW.map((d,i)=>`<div class="cal-dow ${i===0?'sun':''}${i===6?'sat':''}">${d}</div>`).join('')}
+      ${cells}
+    </div>
+    <div id="cal-day-posts">${renderCalDayPosts()}</div>`;
+}
+
+function renderCalDayPosts() {
+  if (!calSelectedKey) {
+    return `<div class="empty" style="padding:28px 0">日付をタップすると、その日の投稿が見られます。</div>`;
+  }
+  const [y,m,d] = calSelectedKey.split('-').map(Number);
+  const dayPosts = state.posts
+    .filter(p => { const dt=new Date(p.timestamp); return dt.getFullYear()===y && dt.getMonth()===m-1 && dt.getDate()===d; })
+    .sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
+  const head = `<div class="cal-selected-head">${y}年${m}月${d}日（${dayPosts.length}件）</div>`;
+  if (dayPosts.length===0) return head + `<div class="empty" style="padding:20px 0">この日の投稿はありません。</div>`;
+  return head + dayPosts.map(p=>renderPost(p, {readOnly:true})).join('');
+}
+
+function refreshCalendar() {
+  const panel = document.getElementById('tab-calendar');
+  if (panel) panel.innerHTML = renderCalendar();
+}
+
+function selectCalDay(key) {
+  calSelectedKey = (calSelectedKey===key) ? null : key;
+  refreshCalendar();
+}
+
+function calPrevMonth() {
+  calMonth--; if (calMonth<0) { calMonth=11; calYear--; }
+  calSelectedKey = null;
+  refreshCalendar();
+}
+
+function calNextMonth() {
+  calMonth++; if (calMonth>11) { calMonth=0; calYear++; }
+  calSelectedKey = null;
+  refreshCalendar();
+}
+
 // ── ALTERS ───────────────────────────────────────────────────────────────────
 let alterFormData = { name:'', handle:'', color: PALETTE[0], role:'' };
 
 function renderAlters() {
   return `
     <div class="section-header">
-      <div class="section-title">アルター一覧</div>
+      <div class="section-title">人格一覧</div>
       <button class="${showAlterForm&&!editingAlterId?'btn-secondary':'btn-primary'}" style="padding:7px 14px;font-size:13px;width:auto"
         onclick="toggleAlterForm()">
         ${showAlterForm&&!editingAlterId?'キャンセル':'+ 追加'}
@@ -690,7 +1118,7 @@ function renderAlterForm() {
   const isEdit = !!editingAlterId;
   return `
     <div class="card" style="margin-bottom:14px">
-      <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:12px">${isEdit?'アルターを編集':'新しいアルター'}</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:12px">${isEdit?'人格を編集':'新しい人格'}</div>
       <div class="input-stack">
         <input type="text" id="af-name" placeholder="名前" value="${escHtml(alterFormData.name)}" maxlength="20"/>
         <input type="text" id="af-handle" placeholder="ハンドル（英数字・_）" value="${escHtml(alterFormData.handle)}" maxlength="20"/>
@@ -790,7 +1218,7 @@ function saveAlter() {
 }
 
 function deleteAlter(id) {
-  if (state.alters.length<=1) { alert('アルターは最低1人必要です。'); return; }
+  if (state.alters.length<=1) { alert('人格は最低1人必要です。'); return; }
   const a = state.alters.find(x=>x.id===id);
   if (!confirm(`${a?.name} を削除しますか？`)) return;
   state.alters = state.alters.filter(x=>x.id!==id);
@@ -814,7 +1242,7 @@ function renderStats() {
       ${[
         {label:'総投稿数', value:total},
         {label:'今日の投稿', value:today},
-        {label:'アルター数', value:state.alters.length},
+        {label:'人格数', value:state.alters.length},
         {label:'記録開始', value:oldest?formatDate(oldest.timestamp).slice(0,10):'—'},
       ].map(s=>`
         <div class="stat-card">
@@ -823,7 +1251,7 @@ function renderStats() {
         </div>`).join('')}
     </div>
     <div class="card settings-section">
-      <div class="settings-label">アルター別投稿数</div>
+      <div class="settings-label">人格別投稿数</div>
       ${state.alters.map(a=>{
         const count = state.posts.filter(p=>p.alterId===a.id).length;
         const pct = total>0?(count/total)*100:0;
@@ -910,7 +1338,38 @@ function renderSettings() {
       <div class="settings-label">データについて</div>
       <div class="settings-desc">データはこのデバイスにのみ保存されます。サーバーへの送信は一切行いません。</div>
       <div class="stat-row"><span class="stat-row-label">総投稿数</span><span class="stat-row-val">${state.posts.length} 件</span></div>
-      <div class="stat-row"><span class="stat-row-label">アルター数</span><span class="stat-row-val">${state.alters.length} 人</span></div>
+      <div class="stat-row"><span class="stat-row-label">人格数</span><span class="stat-row-val">${state.alters.length} 人</span></div>
+    </div>
+
+    <div class="card settings-section">
+      <div class="settings-label">プライバシーと規約</div>
+      <div class="settings-desc">最初に表示した「プライバシーと規約」をもう一度読めます。</div>
+      <button class="btn-secondary" style="width:100%" onclick="viewTerms()">プライバシーと規約を読む</button>
+    </div>
+
+    <div class="card settings-section">
+      <div class="settings-label">開発者情報</div>
+      <div class="dev-msg">${escHtml(DEV_INFO.name)}<br>${escHtml(DEV_INFO.message)}</div>
+      ${DEV_INFO.links && DEV_INFO.links.length ? `
+        <div class="dev-links">
+          ${DEV_INFO.links.map(l=>`<a class="dev-link" href="${escHtml(l.url)}" target="_blank" rel="noopener noreferrer">🔗 ${escHtml(l.label)}</a>`).join('')}
+        </div>` : ''}
+    </div>
+
+    <div class="card settings-section">
+      <div class="settings-label">開発者に寄付する</div>
+      ${activeDonations().length ? `
+        <div class="settings-desc">よかったら暗号資産で応援できます。下のアドレスに送金してください。寄付は任意です。</div>
+        ${activeDonations().map(d=>`
+          <div class="donate-block">
+            <div class="donate-label">${escHtml(d.label)}</div>
+            <div class="eth-box">${escHtml(d.address)}</div>
+            <button class="btn-secondary" style="width:100%" onclick="copyAddress('${escHtml(d.address)}')">アドレスをコピー</button>
+          </div>`).join('')}
+        <div class="settings-desc" style="margin-top:12px;margin-bottom:0;font-size:12px;color:var(--text-4)">⚠️ 送る前に、アドレスが上のものと同じか必ず確認してください。送金は取り消せません。</div>
+      ` : `
+        <div class="settings-desc" style="margin-bottom:0">寄付先のアドレスはまだ設定されていません。</div>
+      `}
     </div>
 
     <div class="card settings-section">
@@ -920,12 +1379,37 @@ function renderSettings() {
     </div>
 
     <div style="text-align:center;margin-top:24px;color:var(--text-4);font-size:11px;line-height:1.8">
-      Mosaic v1.0.0<br>DIDシステム向けプライベートメモ<br>データはあなたのデバイスのみに保存されます
+      Mosaic v1.2.0<br>DIDシステム向けプライベートメモ<br>データはあなたのデバイスのみに保存されます
     </div>`;
 }
 
 function bindSettings() {
   // bound via inline onclick
+}
+
+function copyAddress(text) {
+  const done = () => showToast('アドレスをコピーしました');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+
+function fallbackCopy(text, done) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    done();
+  } catch {
+    showToast('コピーできませんでした');
+  }
 }
 
 function saveSystemName() {
@@ -940,9 +1424,11 @@ function saveSystemName() {
 function resetApp() {
   if (!confirm('すべてのデータを削除してリセットしますか？この操作は取り消せません。')) return;
   localStorage.removeItem(STORAGE_KEY);
-  state = { initialized:false, systemName:'', alters:[], posts:[] };
+  state = { initialized:false, systemName:'', alters:[], posts:[], agreedTermsVersion:0 };
   setupStep = 1;
   setupData = {systemName:'',alterName:'',alterHandle:'',alterColor:PALETTE[0],alterRole:''};
+  showTermsView = false;
+  filterMention = false;
   render();
 }
 
@@ -953,12 +1439,35 @@ function escHtml(str) {
 
 // ── Boot ─────────────────────────────────────────────────────────────────────
 loadState();
+checkVersion();
 render();
 
-// Register Service Worker
+// ── Service Worker（自動アップデート対応） ───────────────────────────────────
 if ('serviceWorker' in navigator) {
+  // すでにSWに管理されている＝以前から使っている人。新SWに切り替わったら一度だけ再読み込み
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController || reloading) return; // 初回インストール時はリロードしない
+    reloading = true;
+    window.location.reload();
+  });
+
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
+    navigator.serviceWorker.register('./sw.js').then((reg) => {
+      // 定期的に更新チェック
+      reg.update().catch(() => {});
+      reg.addEventListener('updatefound', () => {
+        const nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener('statechange', () => {
+          // 新バージョンの準備ができたら待たせずに切り替え（→ controllerchange でリロード）
+          if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+            nw.postMessage({ type: 'SKIP_WAITING' });
+          }
+        });
+      });
+    }).catch(() => {});
   });
 }
 </script>

@@ -75,7 +75,7 @@ https://あなたのユーザー名.github.io/mosaic/
 
 - アプリ名: `<title>` タグと `.setup-logo` のテキスト
 - テーマカラー: CSS変数 `--text`, `--bg`
-- アルターのカラーパレット: `const PALETTE = [...]`
+- 人格のカラーパレット: `const PALETTE = [...]`
 - 気分の種類: `const MOODS = [...]`
 
 ---
