@@ -23,39 +23,47 @@
       --text-3: #888;
       --text-4: #bbb;
       --text-5: #ddd;
+      /* アクセントは元のモノクロ基調に合わせる（黒＋うすいグレー） */
+      --accent: #1a1a1a;
+      --accent-strong: #1a1a1a;
+      --accent-soft: #f0f0f0;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 3px 10px rgba(0, 0, 0, 0.04);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
-    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, "Helvetica Neue", "Noto Sans JP", sans-serif; -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; touch-action: pan-x pan-y; }
+    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, "Helvetica Neue", "Hiragino Maru Gothic ProN", "Noto Sans JP", sans-serif; -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; touch-action: pan-x pan-y; }
     #app { height: 100%; display: flex; flex-direction: column; overflow: hidden; }
 
     /* ── Nav ── */
     .nav {
-      background: var(--surface); border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.82); backdrop-filter: saturate(180%) blur(12px); -webkit-backdrop-filter: saturate(180%) blur(12px);
+      border-bottom: 1px solid var(--border);
       padding: 0 16px; padding-top: var(--safe-top);
       display: flex; align-items: center; gap: 4px;
-      height: calc(50px + var(--safe-top));
+      height: calc(52px + var(--safe-top));
       position: sticky; top: 0; z-index: 100; flex-shrink: 0;
     }
-    .nav-title { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; margin-right: 6px; white-space: nowrap; flex-shrink: 0; }
-    .nav-tabs { display: flex; overflow-x: auto; scrollbar-width: none; flex: 1; }
+    .nav-title { font-size: 16px; font-weight: 800; letter-spacing: -0.02em; margin-right: 8px; white-space: nowrap; flex-shrink: 0; color: var(--accent-strong); }
+    .nav-tabs { display: flex; overflow-x: auto; scrollbar-width: none; flex: 1; gap: 2px; }
     .nav-tabs::-webkit-scrollbar { display: none; }
-    .nav-tab { background: none; border: none; border-bottom: 2px solid transparent; padding: 0 12px; height: 50px; cursor: pointer; font-size: 13px; font-weight: 400; color: var(--text-3); white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
-    .nav-tab.active { border-bottom-color: var(--text); color: var(--text); font-weight: 600; }
+    .nav-tab { position: relative; background: none; border: none; padding: 0 12px; height: 52px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-3); white-space: nowrap; transition: color 0.15s; flex-shrink: 0; }
+    .nav-tab.active { color: var(--accent-strong); font-weight: 700; }
+    .nav-tab.active::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: linear-gradient(90deg, var(--accent-strong), var(--accent)); }
     .nav-icon-btn { background: none; border: none; cursor: pointer; font-size: 18px; color: var(--text-3); padding: 6px; flex-shrink: 0; margin-left: auto; }
 
     /* ── Install banner ── */
     .install-banner {
-      background: var(--text); color: #fff;
-      padding: 10px 16px; display: flex; align-items: center; gap: 10px;
+      background: linear-gradient(120deg, var(--accent-strong), var(--accent)); color: #fff;
+      padding: 12px 16px; display: flex; align-items: center; gap: 10px;
       font-size: 13px; flex-shrink: 0;
     }
     .install-banner.hidden { display: none; }
     .install-banner-text { flex: 1; line-height: 1.4; }
     .install-banner-text strong { display: block; font-size: 13px; }
-    .install-banner-text span { font-size: 11px; color: #aaa; }
-    .install-btn { background: #fff; color: var(--text); border: none; border-radius: 4px; padding: 6px 12px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-    .install-close { background: none; border: none; color: #aaa; cursor: pointer; font-size: 18px; padding: 0 4px; }
+    .install-banner-text span { font-size: 11px; color: rgba(255,255,255,0.8); }
+    .install-btn { background: #fff; color: var(--accent-strong); border: none; border-radius: 999px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .install-close { background: none; border: none; color: rgba(255,255,255,0.85); cursor: pointer; font-size: 18px; padding: 0 4px; }
 
     /* ── Main scroll ── */
     .main { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
@@ -66,61 +74,65 @@
     .tab-panel.active { display: block; }
 
     /* ── Cards ── */
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; }
-    .card.accent { border-left-width: 3px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px 18px; margin-bottom: 12px; box-shadow: var(--shadow); }
+    .card.accent { border-left-width: 4px; }
 
     /* ── Setup ── */
     .setup-root { min-height: 100%; display: flex; align-items: center; justify-content: center; padding: 24px; }
     .setup-inner { width: 100%; max-width: 400px; }
     .setup-header { text-align: center; margin-bottom: 32px; }
-    .setup-logo { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; color: var(--text); margin-bottom: 6px; }
+    .setup-logo { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 6px; color: var(--accent-strong); }
     .setup-tagline { font-size: 13px; color: var(--text-3); }
     .step-dots { display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; }
     .step-dot { width: 28px; height: 4px; border-radius: 2px; background: var(--text-5); transition: background 0.2s; }
-    .step-dot.active { background: var(--text); }
-    .setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 22px; }
+    .step-dot.active { background: var(--accent); }
+    .setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px; box-shadow: var(--shadow); }
     .setup-note { text-align: center; margin-top: 14px; font-size: 11px; color: var(--text-4); }
 
     /* ── Form elements ── */
     .field-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
     .field-desc { font-size: 13px; color: var(--text-3); line-height: 1.65; margin-bottom: 16px; }
     input[type="text"], textarea, select {
-      width: 100%; border: 1px solid var(--border); border-radius: 6px;
-      padding: 10px 12px; font-size: 16px; color: var(--text);
-      background: #fafafa; outline: none; font-family: inherit;
-      transition: border-color 0.15s;
+      width: 100%; border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 11px 14px; font-size: 16px; color: var(--text);
+      background: #faf9fd; outline: none; font-family: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
     }
-    input[type="text"]:focus, textarea:focus { border-color: #aaa; background: #fff; }
+    input[type="text"]:focus, textarea:focus { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 3px var(--accent-soft); }
     textarea { resize: vertical; line-height: 1.65; }
     .input-stack { display: flex; flex-direction: column; gap: 10px; }
     .color-label { font-size: 12px; color: var(--text-3); margin-bottom: 8px; margin-top: 14px; }
     .color-row { display: flex; gap: 8px; flex-wrap: wrap; }
     .color-dot {
-      width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
-      border: 3px solid transparent; transition: border-color 0.1s; flex-shrink: 0;
+      width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+      border: 3px solid transparent; transition: transform 0.1s, border-color 0.1s; flex-shrink: 0;
     }
-    .color-dot.selected { border-color: var(--text); }
+    .color-dot.selected { border-color: #fff; box-shadow: 0 0 0 2.5px var(--text); transform: scale(1.05); }
 
     /* ── Buttons ── */
-    .btn-primary { background: var(--text); color: #fff; border: none; border-radius: 6px; padding: 11px 18px; font-size: 14px; font-weight: 500; cursor: pointer; width: 100%; transition: opacity 0.15s; }
-    .btn-primary:disabled { background: var(--text-5); cursor: default; }
-    .btn-secondary { background: #eee; color: var(--text-2); border: none; border-radius: 6px; padding: 11px 16px; font-size: 13px; cursor: pointer; }
-    .btn-ghost { background: none; border: 1px solid var(--border); border-radius: 4px; padding: 6px 12px; font-size: 12px; color: var(--text-3); cursor: pointer; }
-    .btn-danger { background: none; border: 1px solid #fcc; border-radius: 6px; padding: 11px; font-size: 13px; color: #c00; cursor: pointer; width: 100%; }
+    .btn-primary { background: var(--text); color: #fff; border: none; border-radius: 12px; padding: 12px 18px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; transition: transform 0.1s, opacity 0.15s; }
+    .btn-primary:active { transform: translateY(1px); }
+    .btn-primary:disabled { background: var(--text-5); color: #fff; box-shadow: none; cursor: default; }
+    .btn-secondary { background: var(--accent-soft); color: var(--accent-strong); border: none; border-radius: 12px; padding: 12px 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+    .btn-secondary:active { background: #e4e4e4; }
+    .btn-ghost { background: none; border: 1.5px solid var(--border); border-radius: 999px; padding: 6px 14px; font-size: 12px; color: var(--text-3); cursor: pointer; transition: border-color 0.15s, color 0.15s; }
+    .btn-ghost:active { border-color: var(--accent); color: var(--accent-strong); }
+    .btn-danger { background: none; border: 1.5px solid #f3c6cf; border-radius: 12px; padding: 12px; font-size: 13px; font-weight: 600; color: #d4607a; cursor: pointer; width: 100%; }
     .btn-row { display: flex; gap: 10px; margin-top: 18px; }
-    .btn-row .btn-primary { flex: 1; }
+    .btn-row .btn-primary, .btn-row .btn-secondary { flex: 1; }
 
     /* ── Pill filters ── */
     .pill-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
     .pill {
       display: inline-flex; align-items: center; gap: 5px;
-      border: 1.5px solid var(--border); border-radius: 20px;
-      padding: 4px 12px; font-size: 12px; color: var(--text-3);
-      background: var(--surface); cursor: pointer; transition: all 0.1s;
+      border: 1.5px solid var(--border); border-radius: 999px;
+      padding: 6px 13px; font-size: 12px; color: var(--text-3);
+      background: var(--surface); cursor: pointer; transition: all 0.12s;
       white-space: nowrap;
     }
-    .pill.active { font-weight: 600; }
-    .pill-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .pill.active { font-weight: 700; }
+    .pill:active { transform: scale(0.96); }
+    .pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
     /* ── Compose ── */
     .compose-card { margin-bottom: 14px; }
@@ -132,12 +144,13 @@
       min-height: 72px; color: var(--text); font-family: inherit;
     }
     .compose-footer { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-light); flex-wrap: wrap; }
-    .mood-select { border: 1px solid var(--border); border-radius: 4px; padding: 5px 8px; font-size: 16px; color: var(--text-2); background: #fafafa; cursor: pointer; }
-    .post-btn { margin-left: auto; background: var(--text); color: #fff; border: none; border-radius: 4px; padding: 7px 18px; font-size: 13px; font-weight: 500; cursor: pointer; }
-    .post-btn:disabled { background: var(--text-5); cursor: default; }
+    .mood-select { border: 1.5px solid var(--border); border-radius: 10px; padding: 7px 10px; font-size: 16px; color: var(--text-2); background: #faf9fd; cursor: pointer; }
+    .post-btn { margin-left: auto; background: var(--text); color: #fff; border: none; border-radius: 999px; padding: 9px 22px; font-size: 13px; font-weight: 600; cursor: pointer; transition: transform 0.1s; }
+    .post-btn:active { transform: translateY(1px); }
+    .post-btn:disabled { background: var(--text-5); box-shadow: none; cursor: default; }
 
     /* ── Avatar ── */
-    .avatar { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; flex-shrink: 0; user-select: none; }
+    .avatar { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; flex-shrink: 0; user-select: none; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
     /* ── Post card ── */
     .post-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
@@ -146,7 +159,7 @@
     .alter-name { font-size: 13px; font-weight: 600; }
     .alter-handle { font-size: 12px; color: var(--text-4); }
     .post-time { font-size: 11px; color: var(--text-4); cursor: pointer; white-space: nowrap; flex-shrink: 0; }
-    .post-body { font-size: 14px; line-height: 1.7; color: #222; white-space: pre-wrap; word-break: break-word; }
+    .post-body { font-size: 14px; line-height: 1.7; color: var(--text); white-space: pre-wrap; word-break: break-word; }
     .post-footer { display: flex; align-items: center; gap: 10px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-light); }
     .mood-badge { font-size: 11px; color: var(--text-3); }
     .post-actions { margin-left: auto; display: flex; gap: 10px; }
@@ -154,10 +167,11 @@
 
     /* ── Edit mode ── */
     .edit-area { margin-top: 4px; }
-    .edit-textarea { width: 100%; border: 1px solid var(--border); border-radius: 4px; padding: 8px; font-size: 16px; line-height: 1.65; color: var(--text); resize: vertical; outline: none; font-family: inherit; min-height: 72px; }
+    .edit-textarea { width: 100%; border: 1.5px solid var(--border); border-radius: 12px; padding: 10px; font-size: 16px; line-height: 1.65; color: var(--text); resize: vertical; outline: none; font-family: inherit; min-height: 72px; }
+    .edit-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
     .edit-btns { display: flex; gap: 8px; margin-top: 8px; }
-    .edit-save { background: var(--text); color: #fff; border: none; border-radius: 4px; padding: 6px 14px; font-size: 12px; cursor: pointer; }
-    .edit-cancel { background: none; border: 1px solid var(--border); border-radius: 4px; padding: 6px 14px; font-size: 12px; color: var(--text-3); cursor: pointer; }
+    .edit-save { background: linear-gradient(120deg, var(--accent-strong), var(--accent)); color: #fff; border: none; border-radius: 999px; padding: 7px 16px; font-size: 12px; font-weight: 600; cursor: pointer; }
+    .edit-cancel { background: none; border: 1.5px solid var(--border); border-radius: 999px; padding: 7px 16px; font-size: 12px; color: var(--text-3); cursor: pointer; }
 
     /* ── Alters ── */
     .alter-card-row { display: flex; align-items: center; gap: 14px; }
@@ -170,15 +184,15 @@
 
     /* ── Stats ── */
     .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); }
     .stat-label { font-size: 11px; color: var(--text-3); margin-bottom: 6px; }
-    .stat-value { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; }
+    .stat-value { font-size: 24px; font-weight: 800; letter-spacing: -0.03em; }
     .bar-row { margin-bottom: 12px; }
     .bar-label { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
-    .bar-name { font-size: 13px; color: #333; flex: 1; }
+    .bar-name { font-size: 13px; color: var(--text-2); flex: 1; }
     .bar-count { font-size: 12px; color: var(--text-3); margin-bottom: 4px; }
-    .bar-track { height: 5px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
-    .bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+    .bar-track { height: 7px; background: var(--accent-soft); border-radius: 999px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; transition: width 0.4s ease; }
 
     /* ── Settings ── */
     .settings-section { margin-bottom: 12px; }
@@ -189,26 +203,26 @@
     .stat-row-val { font-weight: 600; }
 
     /* ── Install section in settings ── */
-    .install-section { background: var(--text); color: #fff; border-radius: 8px; padding: 18px; margin-bottom: 12px; }
-    .install-section-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
-    .install-section-desc { font-size: 13px; color: #aaa; line-height: 1.6; margin-bottom: 14px; }
+    .install-section { background: var(--text); color: #fff; border-radius: 16px; padding: 20px; margin-bottom: 12px; }
+    .install-section-title { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .install-section-desc { font-size: 13px; color: rgba(255,255,255,0.85); line-height: 1.6; margin-bottom: 14px; }
     .install-steps { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
     .install-step { display: flex; gap: 10px; align-items: flex-start; }
-    .install-step-num { width: 20px; height: 20px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 1px; }
-    .install-step-text { font-size: 13px; color: #ccc; line-height: 1.5; }
+    .install-step-num { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.22); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .install-step-text { font-size: 13px; color: rgba(255,255,255,0.92); line-height: 1.5; }
     .install-step-text strong { color: #fff; }
-    .install-big-btn { background: #fff; color: var(--text); border: none; border-radius: 6px; padding: 11px; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; }
-    .install-or { text-align: center; font-size: 12px; color: #555; margin: 10px 0; }
+    .install-big-btn { background: #fff; color: var(--accent-strong); border: none; border-radius: 12px; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; }
+    .install-or { text-align: center; font-size: 12px; color: rgba(255,255,255,0.7); margin: 10px 0; }
 
     /* ── Section header row ── */
     .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-    .section-title { font-size: 15px; font-weight: 600; }
+    .section-title { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
 
     /* ── Empty ── */
     .empty { text-align: center; padding: 48px 0; color: var(--text-4); font-size: 14px; }
 
     /* ── Saved toast ── */
-    .toast { position: fixed; bottom: calc(20px + var(--safe-bottom)); left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; padding: 10px 20px; border-radius: 6px; font-size: 13px; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 999; white-space: nowrap; }
+    .toast { position: fixed; bottom: calc(20px + var(--safe-bottom)); left: 50%; transform: translateX(-50%); background: var(--text); color: #fff; padding: 11px 22px; border-radius: 999px; font-size: 13px; font-weight: 600; box-shadow: 0 6px 20px rgba(0,0,0,0.25); opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 1100; white-space: nowrap; max-width: 88vw; overflow: hidden; text-overflow: ellipsis; }
     .toast.show { opacity: 1; }
 
     /* ── Terms / Privacy ── */
@@ -242,43 +256,74 @@
     .donate-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
 
     /* ── Search ── */
-    .search-bar { position: relative; margin-bottom: 10px; }
-    .search-input { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px 34px 10px 36px; font-size: 16px; background: var(--surface); color: var(--text); outline: none; }
-    .search-input:focus { border-color: #aaa; }
-    .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--text-4); pointer-events: none; }
-    .search-clear { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-3); font-size: 18px; cursor: pointer; padding: 2px 6px; line-height: 1; }
+    .search-bar { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 0 10px; margin-bottom: 10px; transition: border-color 0.15s; }
+    .search-bar:focus-within { border-color: #aaa; }
+    .search-icon { font-size: 14px; line-height: 1; color: var(--text-4); flex-shrink: 0; }
+    .search-input { flex: 1; min-width: 0; border: none; background: none; padding: 10px 0; font-size: 16px; color: var(--text); outline: none; font-family: inherit; }
+    .search-clear { flex-shrink: 0; background: none; border: none; color: var(--text-3); font-size: 18px; line-height: 1; cursor: pointer; padding: 4px; }
     .search-count { font-size: 12px; color: var(--text-3); margin-bottom: 8px; }
 
     /* ── Calendar ── */
     .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
     .cal-title { font-size: 15px; font-weight: 700; }
-    .cal-nav { background: none; border: 1px solid var(--border); border-radius: 6px; width: 34px; height: 34px; font-size: 15px; color: var(--text-2); cursor: pointer; }
+    .cal-nav { background: var(--accent-soft); border: none; border-radius: 10px; width: 36px; height: 36px; font-size: 14px; color: var(--accent-strong); cursor: pointer; }
     .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
     .cal-dow { text-align: center; font-size: 11px; color: var(--text-3); padding: 4px 0; }
-    .cal-dow.sun { color: #c0704a; }
-    .cal-dow.sat { color: #4f7cac; }
-    .cal-cell { aspect-ratio: 1 / 1; border: 1px solid var(--border-light); border-radius: 8px; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 4px 2px; cursor: pointer; position: relative; transition: border-color 0.1s; }
+    .cal-dow.sun { color: #c47b62; }
+    .cal-dow.sat { color: #6f87b0; }
+    .cal-cell { aspect-ratio: 1 / 1; border: 1px solid var(--border-light); border-radius: 10px; background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 4px 2px; cursor: pointer; position: relative; transition: border-color 0.1s, background 0.1s; }
     .cal-cell.empty { border: none; background: none; cursor: default; }
     .cal-cell.has-posts { border-color: var(--border); }
-    .cal-cell.today { border-color: var(--text); }
-    .cal-cell.selected { border-color: var(--text); background: #1a1a1a0a; border-width: 2px; }
+    .cal-cell.today { border-color: var(--accent); }
+    .cal-cell.selected { border-color: var(--accent); background: var(--accent-soft); border-width: 2px; }
     .cal-daynum { font-size: 12px; color: var(--text-2); }
-    .cal-cell.today .cal-daynum { font-weight: 700; color: var(--text); }
+    .cal-cell.today .cal-daynum { font-weight: 700; color: var(--accent-strong); }
     .cal-dots { display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; margin-top: 3px; }
     .cal-dot { width: 5px; height: 5px; border-radius: 50%; }
     .cal-more { font-size: 9px; color: var(--text-4); }
     .cal-selected-head { font-size: 14px; font-weight: 600; margin: 18px 0 10px; }
 
+    /* ── Images ── */
+    .icon-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-soft); border: none; border-radius: 999px; padding: 8px 14px; font-size: 13px; font-weight: 600; color: var(--accent-strong); cursor: pointer; transition: background 0.15s; }
+    .icon-btn:active { background: #e4e4e4; }
+    .icon-btn svg { display: block; width: 17px; height: 17px; }
+    .compose-images, .form-images { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .thumb { position: relative; width: 72px; height: 72px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .thumb-remove { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; border-radius: 50%; border: none; background: rgba(0,0,0,0.6); color: #fff; font-size: 13px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .post-images { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; margin-top: 10px; }
+    .post-image { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-light); cursor: pointer; }
+    .avatar-pick { display: flex; align-items: center; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+
+    /* ── Lightbox ── */
+    .lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+    .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 6px; }
+    .lightbox-close { position: absolute; top: calc(12px + var(--safe-top)); right: 16px; background: rgba(255,255,255,0.15); color: #fff; border: none; border-radius: 50%; width: 38px; height: 38px; font-size: 20px; cursor: pointer; }
+
     /* ── Responsive ── */
+    img { max-width: 100%; }
     @media (max-width: 400px) {
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .stat-value { font-size: 18px; }
+      .content { padding: 14px 12px; }
+      .card { padding: 14px 15px; }
+      .stat-value { font-size: 19px; }
+      .nav-tab { padding: 0 10px; font-size: 12.5px; }
+      .compose-footer { gap: 6px; }
+      .mood-select { font-size: 15px; padding: 6px 8px; }
+      .post-btn { padding: 9px 18px; }
+      .cal-grid { gap: 3px; }
+      .cal-daynum { font-size: 11px; }
+      .post-images { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
+    }
+    @media (max-width: 340px) {
+      .nav-title { font-size: 15px; }
+      .pill { padding: 5px 11px; }
     }
   </style>
 </head>
 <body>
 <div id="app"></div>
 <div class="toast" id="toast"></div>
+<div id="lightbox-root"></div>
 
 <script>
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -321,14 +366,17 @@ const ALL_MENTION_WORDS = ["全体", "みんな", "ぜんいん"];
 
 // ── アプリのバージョン ────────────────────────────────────────────────────────
 // 更新するたびに数字を上げる。sw.js の CACHE_NAME も合わせて変えること。
-const APP_VERSION = "1.2.0";
+const APP_VERSION = "1.4.0";
 const VERSION_KEY = "mosaic_version";
 // 今回のバージョンで新しくなったところ（アップデート画面に出ます）
 const WHATS_NEW = [
-  "「アルター」の表記を「人格」に変えました",
+  "見た目をやさしく・読みやすく整えました",
+  "人格にアイコン画像を設定できるようにしました",
+  "投稿に写真を添付できるようにしました（タップで拡大）",
   "投稿や人格名で探せる検索を追加しました",
   "カレンダーから、その日の投稿を見られるようにしました",
   "他の人格や全体へ「メンション・周知」できるようにしました",
+  "はじめの設定を簡単にしました（IDは空欄でもOK）",
   "開発者情報と、寄付（BTC・ETH）の画面を追加しました",
 ];
 
@@ -352,10 +400,50 @@ function loadState() {
 }
 
 function saveState() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); return true; }
+  catch (e) { showToast('保存できませんでした。画像が多いと容量がいっぱいになることがあります'); return false; }
 }
 
 function randomId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+// ハンドル（ID）を自動でつくる。名前の英数字があれば使い、無ければ member1, member2…
+function genHandle(name, excludeId) {
+  let base = String(name||'').toLowerCase().replace(/[^a-z0-9_]/g,'');
+  if (!base) base = 'member';
+  const used = new Set(state.alters.filter(a=>a.id!==excludeId).map(a=>a.handle));
+  if (!used.has(base)) return base;
+  let n = 2;
+  while (used.has(base + n)) n++;
+  return base + n;
+}
+
+// ── Image helper ─────────────────────────────────────────────────────────────
+// 画像ファイルを縮小して data URL（文字列）にする。端末の容量を使いすぎないため。
+function fileToResizedDataURL(file, maxDim, quality) {
+  return new Promise((resolve, reject) => {
+    if (!file || !/^image\//.test(file.type)) { reject(new Error('画像ではありません')); return; }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w >= h) { h = Math.round(h * maxDim / w); w = maxDim; }
+          else { w = Math.round(w * maxDim / h); h = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        try { resolve(canvas.toDataURL('image/jpeg', quality || 0.82)); }
+        catch (err) { reject(err); }
+      };
+      img.onerror = () => reject(new Error('画像を読み込めませんでした'));
+      img.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error('読み込みに失敗しました'));
+    reader.readAsDataURL(file);
+  });
+}
 
 function timeAgo(date) {
   const d = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
@@ -380,7 +468,10 @@ function showToast(msg) {
 
 // ── Avatar HTML ──────────────────────────────────────────────────────────────
 function avatarHTML(alter, size=36) {
-  return `<div class="avatar" style="width:${size}px;height:${size}px;background:${alter.color};font-size:${Math.round(size*0.38)}px">${alter.name.slice(0,1)}</div>`;
+  if (alter.avatarImage) {
+    return `<div class="avatar" style="width:${size}px;height:${size}px;background-image:url('${alter.avatarImage}');background-size:cover;background-position:center"></div>`;
+  }
+  return `<div class="avatar" style="width:${size}px;height:${size}px;background:${alter.color};font-size:${Math.round(size*0.38)}px">${escHtml(alter.name.slice(0,1))}</div>`;
 }
 
 // ── PWA Install ──────────────────────────────────────────────────────────────
@@ -391,6 +482,18 @@ window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
   if (!installBannerDismissed) showInstallBanner();
+  // 設定画面を開いていれば「ホーム画面に追加」ボタンを出すために描き直す
+  if (currentTab === 'settings') {
+    const s = document.getElementById('tab-settings');
+    if (s) s.innerHTML = renderSettings();
+  }
+});
+
+// インストール完了したらバナーを隠してお礼を出す
+window.addEventListener('appinstalled', () => {
+  deferredPrompt = null;
+  hideInstallBanner();
+  showToast('ホーム画面に追加しました');
 });
 
 function showInstallBanner() {
@@ -408,9 +511,16 @@ function hideInstallBanner() {
 async function triggerInstall() {
   if (deferredPrompt) {
     deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
+    try { await deferredPrompt.userChoice; } catch {}
     deferredPrompt = null;
     hideInstallBanner();
+    return;
+  }
+  // インストールプロンプトが使えないとき（iOSや、まだ条件を満たしていないブラウザ）
+  if (isIOS()) {
+    showToast('Safariの共有ボタンから「ホーム画面に追加」を選んでください');
+  } else {
+    showToast('ブラウザのメニューから「ホーム画面に追加 / インストール」を選んでください');
   }
 }
 
@@ -453,6 +563,7 @@ let filterMention = false;
 let searchQuery = '';
 let showTermsView = false;
 let updateInfo = null; // 既存ユーザーが更新したとき { from, to } が入る
+let composeImages = []; // 投稿前に添付した画像（data URL）の一時置き場
 const _now = new Date();
 let calYear = _now.getFullYear();
 let calMonth = _now.getMonth(); // 0-11
@@ -579,12 +690,19 @@ function renderSetup() {
           <div class="setup-logo">Mosaic</div>
           <div class="setup-tagline">DIDシステム向けのプライベートメモアプリ</div>
         </div>
-        <div class="step-dots">
-          <div class="step-dot ${setupStep>=1?'active':''}"></div>
-          <div class="step-dot ${setupStep>=2?'active':''}"></div>
-        </div>
         <div class="setup-card" id="setup-card">
-          ${setupStep===1 ? renderSetupStep1() : renderSetupStep2()}
+          <div class="field-label">最初の人格をつくる</div>
+          <div class="field-desc">今これを読んでいるあなた、または代表の人格をひとり登録します。<br>あとから増やせます。</div>
+          <div class="input-stack">
+            <input type="text" id="setup-altername" placeholder="名前（例：ホスト、守護者…）" value="${escHtml(setupData.alterName)}" maxlength="20" />
+            <input type="text" id="setup-alterhandle" placeholder="ID（英数字。空欄でもOK）" value="${escHtml(setupData.alterHandle)}" maxlength="20" />
+            <input type="text" id="setup-alterrole" placeholder="役割・メモ（任意）" value="${escHtml(setupData.alterRole)}" maxlength="40" />
+          </div>
+          <div class="color-label">カラー</div>
+          <div class="color-row" id="setup-color-row">
+            ${PALETTE.map(c=>`<div class="color-dot ${setupData.alterColor===c?'selected':''}" data-color="${c}" style="background:${c}" onclick="selectSetupColor('${c}')"></div>`).join('')}
+          </div>
+          <button class="btn-primary" id="setup-complete" style="margin-top:18px" ${!setupData.alterName.trim()?'disabled':''}>はじめる</button>
         </div>
         <div class="setup-note">データはこのデバイスにのみ保存されます</div>
       </div>
@@ -592,71 +710,22 @@ function renderSetup() {
   </div>`;
 }
 
-function renderSetupStep1() {
-  return `
-    <div class="field-label">システム名を決める</div>
-    <div class="field-desc">あなたたちのシステム全体を表す名前。<br>あとから変更できます。</div>
-    <input type="text" id="setup-sysname" placeholder="例：桜システム、私たち…" value="${escHtml(setupData.systemName)}" maxlength="30" />
-    <button class="btn-primary" id="setup-next" style="margin-top:16px" ${!setupData.systemName.trim()?'disabled':''}>次へ →</button>`;
-}
-
-function renderSetupStep2() {
-  return `
-    <div class="field-label">最初の人格を登録</div>
-    <div class="field-desc">今これを読んでいるあなた、または<br>代表的な人格を登録しよう。</div>
-    <div class="input-stack">
-      <input type="text" id="setup-altername" placeholder="名前（例：ホスト、守護者…）" value="${escHtml(setupData.alterName)}" maxlength="20" />
-      <input type="text" id="setup-alterhandle" placeholder="ハンドル（英数字・_）" value="${escHtml(setupData.alterHandle)}" maxlength="20" />
-      <input type="text" id="setup-alterrole" placeholder="役割・メモ（任意）" value="${escHtml(setupData.alterRole)}" maxlength="40" />
-    </div>
-    <div class="color-label">カラー</div>
-    <div class="color-row" id="setup-color-row">
-      ${PALETTE.map(c=>`<div class="color-dot ${setupData.alterColor===c?'selected':''}" data-color="${c}" style="background:${c}" onclick="selectSetupColor('${c}')"></div>`).join('')}
-    </div>
-    <div class="btn-row">
-      <button class="btn-secondary" onclick="setupBack()">← 戻る</button>
-      <button class="btn-primary" id="setup-complete" ${!setupData.alterName.trim()||!setupData.alterHandle.trim()?'disabled':''}>はじめる</button>
-    </div>`;
-}
-
 function bindSetup() {
-  if (setupStep===1) {
-    const inp = document.getElementById('setup-sysname');
-    inp?.addEventListener('input', e => {
-      setupData.systemName = e.target.value;
-      document.getElementById('setup-next').disabled = !e.target.value.trim();
-    });
-    inp?.addEventListener('keydown', e => { if (e.key==='Enter' && setupData.systemName.trim()) setupNext(); });
-    document.getElementById('setup-next')?.addEventListener('click', setupNext);
-  } else {
-    document.getElementById('setup-altername')?.addEventListener('input', e => {
-      setupData.alterName = e.target.value;
-      updateSetupComplete();
-    });
-    document.getElementById('setup-alterhandle')?.addEventListener('input', e => {
-      setupData.alterHandle = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g,'');
-      e.target.value = setupData.alterHandle;
-      updateSetupComplete();
-    });
-    document.getElementById('setup-alterrole')?.addEventListener('input', e => { setupData.alterRole = e.target.value; });
-    document.getElementById('setup-complete')?.addEventListener('click', completeSetup);
-  }
+  document.getElementById('setup-altername')?.addEventListener('input', e => {
+    setupData.alterName = e.target.value;
+    updateSetupComplete();
+  });
+  document.getElementById('setup-alterhandle')?.addEventListener('input', e => {
+    setupData.alterHandle = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g,'');
+    e.target.value = setupData.alterHandle;
+  });
+  document.getElementById('setup-alterrole')?.addEventListener('input', e => { setupData.alterRole = e.target.value; });
+  document.getElementById('setup-complete')?.addEventListener('click', completeSetup);
 }
 
 function updateSetupComplete() {
   const btn = document.getElementById('setup-complete');
-  if (btn) btn.disabled = !setupData.alterName.trim() || !setupData.alterHandle.trim();
-}
-
-function setupNext() {
-  if (!setupData.systemName.trim()) return;
-  setupStep = 2;
-  render();
-}
-
-function setupBack() {
-  setupStep = 1;
-  render();
+  if (btn) btn.disabled = !setupData.alterName.trim();
 }
 
 function selectSetupColor(c) {
@@ -667,12 +736,13 @@ function selectSetupColor(c) {
 }
 
 function completeSetup() {
-  if (!setupData.alterName.trim() || !setupData.alterHandle.trim()) return;
-  state.systemName = setupData.systemName.trim();
+  if (!setupData.alterName.trim()) return;
+  // システム名は決めさせず、既定で「Mosaic」。設定でいつでも変えられる
+  state.systemName = state.systemName && state.systemName.trim() ? state.systemName : 'Mosaic';
   state.alters = [{
     id: randomId(), name: setupData.alterName.trim(),
-    handle: setupData.alterHandle.trim(), color: setupData.alterColor,
-    role: setupData.alterRole.trim(), createdAt: new Date().toISOString()
+    handle: setupData.alterHandle.trim() || genHandle(setupData.alterName), color: setupData.alterColor,
+    role: setupData.alterRole.trim(), avatarImage: '', createdAt: new Date().toISOString()
   }];
   state.posts = [];
   state.initialized = true;
@@ -790,7 +860,13 @@ function renderTimeline() {
         ${state.alters.filter(a=>a.id!==activeAlterId()).map(a=>`
           <button class="mention-chip" onclick="insertMention('@${escHtml(a.handle)}')">@${escHtml(a.handle)}</button>`).join('')}
       </div>
+      <div class="compose-images" id="compose-images">${renderComposeImages()}</div>
       <div class="compose-footer">
+        <label class="icon-btn" title="画像を追加">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+          <span>写真</span>
+          <input type="file" accept="image/*" multiple hidden onchange="onComposeImagePick(event)" />
+        </label>
         <select class="mood-select" id="compose-mood">
           ${MOODS.map(m=>`<option value="${m.value}">${m.emoji} ${m.label}</option>`).join('')}
         </select>
@@ -806,7 +882,7 @@ function renderTimeline() {
     </div>
 
     <div class="pill-row">
-      <div class="pill ${filterAlterId==='all'?'active':''}" onclick="setFilterAlter('all')" style="${filterAlterId==='all'?'border-color:#1a1a1a;background:#1a1a1a0f;color:#1a1a1a;font-weight:600':''}">すべて</div>
+      <div class="pill ${filterAlterId==='all'?'active':''}" onclick="setFilterAlter('all')" style="${filterAlterId==='all'?'border-color:var(--accent);background:var(--accent-soft);color:var(--accent-strong);font-weight:700':''}">すべて</div>
       ${state.alters.map(a=>`
         <div class="pill ${filterAlterId===a.id?'active':''}"
              style="${filterAlterId===a.id?`border-color:${a.color};background:${a.color}15;color:${a.color};font-weight:600`:''}"
@@ -815,7 +891,7 @@ function renderTimeline() {
         </div>`).join('')}
     </div>
     <div class="pill-row">
-      <div class="pill ${filterMood==='all'?'active':''}" onclick="setFilterMood('all')" style="${filterMood==='all'?'border-color:#1a1a1a;background:#1a1a1a0f;color:#1a1a1a;font-weight:600':''}">気分：全て</div>
+      <div class="pill ${filterMood==='all'?'active':''}" onclick="setFilterMood('all')" style="${filterMood==='all'?'border-color:var(--accent);background:var(--accent-soft);color:var(--accent-strong);font-weight:700':''}">気分：全て</div>
       ${MOODS.map(m=>`
         <div class="pill ${filterMood===m.value?'active':''}" onclick="setFilterMood('${m.value}')"
              style="${filterMood===m.value?'border-color:#555;background:#5550;color:#333;font-weight:600':''}">
@@ -862,7 +938,11 @@ function renderPost(post, opts={}) {
             <button class="edit-cancel" onclick="cancelEdit()">キャンセル</button>
           </div>
         </div>` : `
-        <p class="post-body">${renderContentWithMentions(post.content)}</p>`}
+        ${post.content?`<p class="post-body">${renderContentWithMentions(post.content)}</p>`:''}`}
+      ${post.images && post.images.length ? `
+        <div class="post-images">
+          ${post.images.map((src,i)=>`<img class="post-image" src="${src}" alt="画像" onclick="openLightbox('${post.id}',${i})" />`).join('')}
+        </div>` : ''}
       <div class="post-footer">
         ${isAnnounce?`<span class="announce-badge">📢 周知</span>`:''}
         <span class="mood-badge">${mood?mood.emoji+' '+mood.label:''}</span>
@@ -883,9 +963,51 @@ function activeAlterId() {
 
 function bindTimeline() {
   const ta = document.getElementById('compose-text');
-  const btn = document.getElementById('post-btn');
-  ta?.addEventListener('input', () => { if(btn) btn.disabled = !ta.value.trim(); });
+  ta?.addEventListener('input', updatePostBtn);
   ta?.addEventListener('keydown', e => { if (e.key==='Enter'&&(e.ctrlKey||e.metaKey)) submitPost(); });
+  updatePostBtn();
+}
+
+// 投稿ボタンの有効・無効：文章があるか、画像があれば投稿できる
+function updatePostBtn() {
+  const ta = document.getElementById('compose-text');
+  const btn = document.getElementById('post-btn');
+  if (btn) btn.disabled = !((ta && ta.value.trim()) || composeImages.length);
+}
+
+// ── Compose images ───────────────────────────────────────────────────────────
+function renderComposeImages() {
+  if (!composeImages.length) return '';
+  return composeImages.map((src,i)=>`
+    <div class="thumb">
+      <img src="${src}" alt="添付画像" />
+      <button class="thumb-remove" onclick="removeComposeImage(${i})">×</button>
+    </div>`).join('');
+}
+
+function updateComposeImagesUI() {
+  const box = document.getElementById('compose-images');
+  if (box) box.innerHTML = renderComposeImages();
+  updatePostBtn();
+}
+
+async function onComposeImagePick(ev) {
+  const files = Array.from(ev.target.files || []);
+  ev.target.value = ''; // 同じ画像を続けて選べるようにリセット
+  const MAX = 4;
+  for (const f of files) {
+    if (composeImages.length >= MAX) { showToast(`画像は${MAX}枚までです`); break; }
+    try {
+      const dataURL = await fileToResizedDataURL(f, 1200, 0.8);
+      composeImages.push(dataURL);
+      updateComposeImagesUI();
+    } catch { showToast('この画像は読み込めませんでした'); }
+  }
+}
+
+function removeComposeImage(i) {
+  composeImages.splice(i, 1);
+  updateComposeImagesUI();
 }
 
 function selectAlter(id) {
@@ -958,13 +1080,22 @@ function refreshTimeline() {
 function submitPost() {
   const ta = document.getElementById('compose-text');
   const mood = document.getElementById('compose-mood');
-  if (!ta?.value.trim()) return;
+  const text = ta?.value.trim() || '';
+  const images = composeImages.slice();
+  if (!text && !images.length) return; // 文章も画像も無ければ投稿しない
   state.posts.unshift({
     id: randomId(), alterId: activeAlterId(),
-    content: ta.value.trim(), mood: mood?.value||'neutral',
+    content: text, mood: mood?.value||'neutral',
+    images: images,
     timestamp: new Date()
   });
-  saveState();
+  const ok = saveState();
+  if (ok === false) {
+    // 容量オーバーで保存できなかったら投稿を取り消す
+    state.posts.shift();
+    return;
+  }
+  composeImages = [];
   refreshTimeline();
 }
 
@@ -999,6 +1130,23 @@ function deletePost(id) {
 function toggleDate(id) {
   expandedDateId = expandedDateId===id ? null : id;
   refreshTimeline();
+}
+
+// ── Lightbox（画像の拡大表示） ───────────────────────────────────────────────
+function openLightbox(postId, index) {
+  const post = state.posts.find(p=>p.id===postId);
+  if (!post || !post.images || !post.images[index]) return;
+  const root = document.getElementById('lightbox-root');
+  if (!root) return;
+  root.innerHTML = `
+    <div class="lightbox" onclick="closeLightbox()">
+      <button class="lightbox-close" onclick="closeLightbox()">×</button>
+      <img src="${post.images[index]}" alt="画像" onclick="event.stopPropagation()" />
+    </div>`;
+}
+function closeLightbox() {
+  const root = document.getElementById('lightbox-root');
+  if (root) root.innerHTML = '';
 }
 
 // ── CALENDAR ─────────────────────────────────────────────────────────────────
@@ -1099,7 +1247,7 @@ function calNextMonth() {
 }
 
 // ── ALTERS ───────────────────────────────────────────────────────────────────
-let alterFormData = { name:'', handle:'', color: PALETTE[0], role:'' };
+let alterFormData = { name:'', handle:'', color: PALETTE[0], role:'', avatarImage:'' };
 
 function renderAlters() {
   return `
@@ -1121,18 +1269,43 @@ function renderAlterForm() {
       <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:12px">${isEdit?'人格を編集':'新しい人格'}</div>
       <div class="input-stack">
         <input type="text" id="af-name" placeholder="名前" value="${escHtml(alterFormData.name)}" maxlength="20"/>
-        <input type="text" id="af-handle" placeholder="ハンドル（英数字・_）" value="${escHtml(alterFormData.handle)}" maxlength="20"/>
+        <input type="text" id="af-handle" placeholder="ID（英数字。空欄でもOK）" value="${escHtml(alterFormData.handle)}" maxlength="20"/>
         <input type="text" id="af-role" placeholder="役割・メモ（任意）" value="${escHtml(alterFormData.role)}" maxlength="40"/>
       </div>
-      <div class="color-label">カラー</div>
+      <div class="color-label">アイコン画像（任意）</div>
+      <div class="avatar-pick">
+        ${avatarHTML({name:alterFormData.name||'？', color:alterFormData.color, avatarImage:alterFormData.avatarImage}, 56)}
+        <label class="icon-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+          <span>画像を選ぶ</span>
+          <input type="file" accept="image/*" hidden onchange="onAlterAvatarPick(event)" />
+        </label>
+        ${alterFormData.avatarImage?`<button class="btn-ghost" onclick="clearAlterAvatar()">画像を消す</button>`:''}
+      </div>
+      <div class="color-label">カラー（画像が無いときに使われます）</div>
       <div class="color-row" id="af-color-row">
         ${PALETTE.map(c=>`<div class="color-dot ${alterFormData.color===c?'selected':''}" data-color="${c}" style="background:${c}" onclick="selectAlterColor('${c}')"></div>`).join('')}
       </div>
       <div class="btn-row">
         <button class="btn-secondary" onclick="cancelAlterForm()">キャンセル</button>
-        <button class="btn-primary" id="af-save" ${!alterFormData.name.trim()||!alterFormData.handle.trim()?'disabled':''} onclick="saveAlter()">${isEdit?'更新する':'追加する'}</button>
+        <button class="btn-primary" id="af-save" ${!alterFormData.name.trim()?'disabled':''} onclick="saveAlter()">${isEdit?'更新する':'追加する'}</button>
       </div>
     </div>`;
+}
+
+async function onAlterAvatarPick(ev) {
+  const file = (ev.target.files || [])[0];
+  ev.target.value = '';
+  if (!file) return;
+  try {
+    alterFormData.avatarImage = await fileToResizedDataURL(file, 240, 0.85);
+    refreshAlters();
+  } catch { showToast('この画像は読み込めませんでした'); }
+}
+
+function clearAlterAvatar() {
+  alterFormData.avatarImage = '';
+  refreshAlters();
 }
 
 function renderAlterCard(a) {
@@ -1171,7 +1344,7 @@ function bindAlters() {
 
 function updateAfSave() {
   const btn = document.getElementById('af-save');
-  if (btn) btn.disabled = !alterFormData.name.trim() || !alterFormData.handle.trim();
+  if (btn) btn.disabled = !alterFormData.name.trim();
 }
 
 function selectAlterColor(c) {
@@ -1183,13 +1356,13 @@ function selectAlterColor(c) {
 
 function toggleAlterForm() {
   showAlterForm = !showAlterForm;
-  if (!showAlterForm) { editingAlterId=null; alterFormData={name:'',handle:'',color:PALETTE[0],role:''}; }
+  if (!showAlterForm) { editingAlterId=null; alterFormData={name:'',handle:'',color:PALETTE[0],role:'',avatarImage:''}; }
   refreshAlters();
 }
 
 function cancelAlterForm() {
   showAlterForm = false; editingAlterId = null;
-  alterFormData = {name:'',handle:'',color:PALETTE[0],role:''};
+  alterFormData = {name:'',handle:'',color:PALETTE[0],role:'',avatarImage:''};
   refreshAlters();
 }
 
@@ -1197,21 +1370,22 @@ function startEditAlter(id) {
   const a = state.alters.find(x=>x.id===id);
   if (!a) return;
   editingAlterId = id;
-  alterFormData = {name:a.name, handle:a.handle, color:a.color, role:a.role||''};
+  alterFormData = {name:a.name, handle:a.handle, color:a.color, role:a.role||'', avatarImage:a.avatarImage||''};
   showAlterForm = true;
   refreshAlters();
 }
 
 function saveAlter() {
-  if (!alterFormData.name.trim() || !alterFormData.handle.trim()) return;
+  if (!alterFormData.name.trim()) return;
   if (editingAlterId) {
-    state.alters = state.alters.map(a=>a.id===editingAlterId?{...a,...alterFormData,name:alterFormData.name.trim(),handle:alterFormData.handle.trim(),role:alterFormData.role.trim()}:a);
+    const handle = alterFormData.handle.trim() || genHandle(alterFormData.name, editingAlterId);
+    state.alters = state.alters.map(a=>a.id===editingAlterId?{...a,...alterFormData,name:alterFormData.name.trim(),handle:handle,role:alterFormData.role.trim(),avatarImage:alterFormData.avatarImage||''}:a);
     editingAlterId = null;
   } else {
-    state.alters.push({ id:randomId(), name:alterFormData.name.trim(), handle:alterFormData.handle.trim(), color:alterFormData.color, role:alterFormData.role.trim(), createdAt:new Date().toISOString() });
+    state.alters.push({ id:randomId(), name:alterFormData.name.trim(), handle:alterFormData.handle.trim()||genHandle(alterFormData.name), color:alterFormData.color, role:alterFormData.role.trim(), avatarImage:alterFormData.avatarImage||'', createdAt:new Date().toISOString() });
   }
   showAlterForm = false;
-  alterFormData = {name:'',handle:'',color:PALETTE[0],role:''};
+  alterFormData = {name:'',handle:'',color:PALETTE[0],role:'',avatarImage:''};
   saveState();
   refreshAlters();
   showToast('保存しました');
@@ -1373,18 +1547,43 @@ function renderSettings() {
     </div>
 
     <div class="card settings-section">
+      <div class="settings-label">アプリの更新</div>
+      <div class="settings-desc">いまのバージョンは <strong>v${escHtml(APP_VERSION)}</strong> です。<br>最新になっていないと感じたら、下のボタンで更新できます（データは消えません）。</div>
+      <button class="btn-primary" onclick="forceUpdate()">最新の状態にして再読み込み</button>
+    </div>
+
+    <div class="card settings-section">
       <div class="settings-label">危険な操作</div>
       <div class="settings-desc">以下の操作は取り消せません。</div>
       <button class="btn-danger" onclick="resetApp()">すべてのデータをリセット</button>
     </div>
 
     <div style="text-align:center;margin-top:24px;color:var(--text-4);font-size:11px;line-height:1.8">
-      Mosaic v1.2.0<br>DIDシステム向けプライベートメモ<br>データはあなたのデバイスのみに保存されます
+      Mosaic v${escHtml(APP_VERSION)}<br>DIDシステム向けプライベートメモ<br>データはあなたのデバイスのみに保存されます
     </div>`;
 }
 
 function bindSettings() {
   // bound via inline onclick
+}
+
+// 手動アップデート：古いキャッシュを全部消し、SWを更新してから再読み込み
+async function forceUpdate() {
+  showToast('最新を確認しています…');
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.update().catch(() => {})));
+    }
+  } catch {}
+  try {
+    if (window.caches) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k)));
+    }
+  } catch {}
+  // キャッシュを消したのでネットから最新を取り直す
+  window.location.reload();
 }
 
 function copyAddress(text) {
