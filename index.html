@@ -366,10 +366,11 @@ const ALL_MENTION_WORDS = ["全体", "みんな", "ぜんいん"];
 
 // ── アプリのバージョン ────────────────────────────────────────────────────────
 // 更新するたびに数字を上げる。sw.js の CACHE_NAME も合わせて変えること。
-const APP_VERSION = "1.4.0";
+const APP_VERSION = "1.5.0";
 const VERSION_KEY = "mosaic_version";
 // 今回のバージョンで新しくなったところ（アップデート画面に出ます）
 const WHATS_NEW = [
+  "兄弟アプリ「Shift」へ人格を引き継ぐ書き出し機能を追加しました",
   "見た目をやさしく・読みやすく整えました",
   "人格にアイコン画像を設定できるようにしました",
   "投稿に写真を添付できるようにしました（タップで拡大）",
@@ -1516,6 +1517,13 @@ function renderSettings() {
     </div>
 
     <div class="card settings-section">
+      <div class="settings-label">Shiftへ引き継ぐ</div>
+      <div class="settings-desc">兄弟アプリ「Shift」に人格を引き継げます。下のコードをコピーして、Shiftの設定 →「Mosaicから取り込む」に貼り付けてください。</div>
+      <div class="eth-box" id="export-code">${escHtml(buildExportCode())}</div>
+      <button class="btn-secondary" style="width:100%" onclick="copyExportCode()">引き継ぎコードをコピー</button>
+    </div>
+
+    <div class="card settings-section">
       <div class="settings-label">プライバシーと規約</div>
       <div class="settings-desc">最初に表示した「プライバシーと規約」をもう一度読めます。</div>
       <button class="btn-secondary" style="width:100%" onclick="viewTerms()">プライバシーと規約を読む</button>
@@ -1609,6 +1617,22 @@ function fallbackCopy(text, done) {
   } catch {
     showToast('コピーできませんでした');
   }
+}
+
+function encodeLink(str) {
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, h) => String.fromCharCode(parseInt(h, 16))));
+}
+function buildExportCode() {
+  const payload = { app: 'mosaic-shift-link', v: 1, systemName: state.systemName,
+    alters: state.alters.map(a => ({ id: a.id, name: a.name, handle: a.handle, color: a.color, role: a.role || '' })) };
+  try { return encodeLink(JSON.stringify(payload)); } catch { return ''; }
+}
+function copyExportCode() {
+  const code = (document.getElementById('export-code') || {}).textContent || '';
+  const done = () => showToast('引き継ぎコードをコピーしました');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(done).catch(() => fallbackCopy(code, done));
+  } else { fallbackCopy(code, done); }
 }
 
 function saveSystemName() {
