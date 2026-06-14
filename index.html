@@ -366,10 +366,11 @@ const ALL_MENTION_WORDS = ["全体", "みんな", "ぜんいん"];
 
 // ── アプリのバージョン ────────────────────────────────────────────────────────
 // 更新するたびに数字を上げる。sw.js の CACHE_NAME も合わせて変えること。
-const APP_VERSION = "1.5.0";
+const APP_VERSION = "1.6.0";
 const VERSION_KEY = "mosaic_version";
 // 今回のバージョンで新しくなったところ（アップデート画面に出ます）
 const WHATS_NEW = [
+  "兄弟アプリ「Shift」から人格を取り込めるようにしました（はじめの画面でも案内します）",
   "兄弟アプリ「Shift」へ人格を引き継ぐ書き出し機能を追加しました",
   "見た目をやさしく・読みやすく整えました",
   "人格にアイコン画像を設定できるようにしました",
@@ -548,6 +549,11 @@ function render() {
     return;
   }
   if (!state.initialized) {
+    if (showCodeImport) {
+      app.innerHTML = renderCodeImport();
+      document.getElementById('first-import-code')?.focus();
+      return;
+    }
     app.innerHTML = renderSetup();
     bindSetup();
     return;
@@ -557,6 +563,29 @@ function render() {
   switchTab(currentTab);
 }
 
+// ── 初期起動：引き継ぎコードで取り込む ─────────────────────────────────────────────
+function renderCodeImport() {
+  return `
+  <div class="main">
+    <div class="setup-root">
+      <div class="setup-inner">
+        <div class="setup-header">
+          <div class="setup-logo">Mosaic</div>
+          <div class="setup-tagline">DIDシステム向けのプライベートメモアプリ</div>
+        </div>
+        <div class="setup-card">
+          <div class="field-label">Shiftから引き継ぐ</div>
+          <div class="field-desc">兄弟アプリ「Shift」の設定 →「Mosaicへ引き継ぐ」でコピーした<strong>引き継ぎコード</strong>を、下に貼り付けてください。人格の情報をそのまま引き継げます。</div>
+          <textarea id="first-import-code" style="width:100%;min-height:88px;margin:4px 0 12px;font-size:12px;font-family:monospace;border:1px solid var(--border);border-radius:12px;padding:10px 12px;resize:vertical;color:var(--text);background:var(--bg)" placeholder="引き継ぎコードをここに貼り付け"></textarea>
+          <button class="btn-primary" onclick="doCodeImport()">取り込んで始める</button>
+          <button class="btn-secondary" style="width:100%;margin-top:8px" onclick="closeCodeImport()">← 戻る</button>
+        </div>
+        <div class="setup-note">データはこのデバイスにのみ保存されます</div>
+      </div>
+    </div>
+  </div>`;
+}
+
 let currentTab = 'timeline';
 let filterAlterId = 'all';
 let filterMood = 'all';
@@ -564,6 +593,7 @@ let filterMention = false;
 let searchQuery = '';
 let showTermsView = false;
 let updateInfo = null; // 既存ユーザーが更新したとき { from, to } が入る
+let showCodeImport = false; // 初期起動でコード取り込み画面を出しているとき true
 let composeImages = []; // 投稿前に添付した画像（data URL）の一時置き場
 const _now = new Date();
 let calYear = _now.getFullYear();
@@ -645,7 +675,11 @@ function checkVersion() {
     // （今回からバージョン管理を始めたため、初回だけ案内を出す）
     updateInfo = { from: null, to: APP_VERSION };
   }
-  try { localStorage.setItem(VERSION_KEY, APP_VERSION); } catch {}
+  // 更新案内を出すときは、ユーザーが「続ける」を押すまでバージョンを記録しない。
+  // （直後にSW切り替えのリロードが入っても、案内が一瞬で消えないように）
+  if (!updateInfo) {
+    try { localStorage.setItem(VERSION_KEY, APP_VERSION); } catch {}
+  }
 }
 
 function renderUpdateScreen() {
@@ -677,6 +711,8 @@ function renderUpdateScreen() {
 }
 
 function dismissUpdate() {
+  // ここで初めて新バージョンを記録する（案内を読み終えた合図）
+  try { localStorage.setItem(VERSION_KEY, APP_VERSION); } catch {}
   updateInfo = null;
   render();
 }
@@ -704,6 +740,9 @@ function renderSetup() {
             ${PALETTE.map(c=>`<div class="color-dot ${setupData.alterColor===c?'selected':''}" data-color="${c}" style="background:${c}" onclick="selectSetupColor('${c}')"></div>`).join('')}
           </div>
           <button class="btn-primary" id="setup-complete" style="margin-top:18px" ${!setupData.alterName.trim()?'disabled':''}>はじめる</button>
+          <div style="text-align:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--border-light)">
+            <a href="#" onclick="openCodeImport();return false" style="font-size:12.5px;color:var(--text-3);text-decoration:none;line-height:1.7">すでにShiftを使っている方は、<br>引き継ぎコードで人格を取り込めます →</a>
+          </div>
         </div>
         <div class="setup-note">データはこのデバイスにのみ保存されます</div>
       </div>
@@ -1524,6 +1563,13 @@ function renderSettings() {
     </div>
 
     <div class="card settings-section">
+      <div class="settings-label">Shiftから取り込む</div>
+      <div class="settings-desc">兄弟アプリ「Shift」の設定 →「Mosaicへ引き継ぐ」でコピーしたコードを、下に貼り付けてください。人格リストを置きかえます。</div>
+      <textarea id="shift-import-code" style="width:100%;min-height:72px;margin:10px 0;font-size:12px;font-family:monospace;border:1px solid var(--border);border-radius:8px;padding:8px 10px;resize:vertical;color:var(--text);background:var(--bg)" placeholder="引き継ぎコードをここに貼り付け"></textarea>
+      <button class="btn-primary" style="width:100%" onclick="importFromCode()">取り込む</button>
+    </div>
+
+    <div class="card settings-section">
       <div class="settings-label">Ataraxia Works のアプリ</div>
       <div class="settings-desc">Mosaicは「Ataraxia Works」がつくる道具のひとつです。今フロントにいる人格の管理や申し送りには、兄弟アプリ「Shift」を使えます。</div>
       <a class="btn-secondary" style="display:block;text-align:center;text-decoration:none;width:100%;margin-bottom:8px" href="https://shift.xdcyw.net" target="_blank" rel="noopener">Shift を開く →</a>
@@ -1640,6 +1686,60 @@ function copyExportCode() {
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(code).then(done).catch(() => fallbackCopy(code, done));
   } else { fallbackCopy(code, done); }
+}
+function decodeLink(str) {
+  try {
+    return decodeURIComponent(Array.from(atob(str), c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0')).join(''));
+  } catch { return null; }
+}
+// 貼り付けられたコードを検証して payload を返す（だめなら toast を出して null）
+function parseLinkCode(raw) {
+  if (!raw) { showToast('コードを貼り付けてください'); return null; }
+  const json = decodeLink(raw);
+  if (!json) { showToast('コードが正しくありません'); return null; }
+  let payload;
+  try { payload = JSON.parse(json); } catch { showToast('コードが正しくありません'); return null; }
+  if (!payload || payload.app !== 'mosaic-shift-link' || !Array.isArray(payload.alters) || !payload.alters.length) {
+    showToast('引き継ぎコードではありません'); return null;
+  }
+  return payload;
+}
+// payload の人格リストを Mosaic の state に反映
+function applyLinkPayload(payload) {
+  state.alters = payload.alters.map(a => ({
+    id: a.id || randomId(), name: a.name || '名前なし', handle: a.handle || genHandle(a.name || '名前なし'),
+    color: a.color || PALETTE[0], role: a.role || '', avatarImage: '', createdAt: new Date().toISOString()
+  }));
+  if (payload.systemName && payload.systemName.trim()) state.systemName = payload.systemName.trim();
+  else if (!state.systemName) state.systemName = 'Mosaic';
+  if (!Array.isArray(state.posts)) state.posts = [];
+  saveState();
+}
+// 設定画面からの取り込み（既存の人格は置きかえ）
+function importFromCode() {
+  const inp = document.getElementById('shift-import-code');
+  const payload = parseLinkCode(inp ? inp.value.trim() : '');
+  if (!payload) return;
+  if (!confirm('Shiftの人格データ（' + payload.alters.length + '件）を取り込みます。今のMosaicの人格リストは置きかえられます。続けますか？')) return;
+  applyLinkPayload(payload);
+  if (inp) inp.value = '';
+  const s = document.getElementById('tab-settings');
+  if (s) s.innerHTML = renderSettings();
+  showToast(state.alters.length + '人格を取り込みました');
+}
+// 初期起動：引き継ぎコードで取り込んで始める
+function openCodeImport()  { showCodeImport = true;  render(); }
+function closeCodeImport() { showCodeImport = false; render(); }
+function doCodeImport() {
+  const inp = document.getElementById('first-import-code');
+  const payload = parseLinkCode(inp ? inp.value.trim() : '');
+  if (!payload) return;
+  applyLinkPayload(payload);
+  state.initialized = true;
+  saveState();
+  showCodeImport = false;
+  render();
+  showToast(state.alters.length + '人格を取り込みました');
 }
 
 function saveSystemName() {
