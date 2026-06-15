@@ -147,6 +147,41 @@
     .mood-select { border: 1.5px solid var(--border); border-radius: 10px; padding: 7px 10px; font-size: 16px; color: var(--text-2); background: #faf9fd; cursor: pointer; }
     .post-btn { margin-left: auto; background: var(--text); color: #fff; border: none; border-radius: 999px; padding: 9px 22px; font-size: 13px; font-weight: 600; cursor: pointer; transition: transform 0.1s; }
     .post-btn:active { transform: translateY(1px); }
+
+    /* ── Writer bar（書く人格） ── */
+    .writer-bar { display: flex; align-items: center; gap: 10px; width: 100%; background: var(--accent-soft); border: 1.5px solid var(--border); border-radius: 12px; padding: 8px 12px; cursor: pointer; margin-bottom: 12px; text-align: left; font-family: inherit; }
+    .writer-bar:active { transform: scale(0.99); }
+    .writer-bar .wb-label { font-size: 11px; color: var(--text-3); }
+    .writer-bar .wb-name { font-size: 15px; font-weight: 700; color: var(--text); }
+    .writer-bar .wb-chev { margin-left: auto; color: var(--text-3); font-size: 12px; font-weight: 600; white-space: nowrap; }
+
+    /* ── Bottom sheet ── */
+    .sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1200; display: flex; align-items: flex-end; justify-content: center; animation: sheetfade 0.15s ease; }
+    @keyframes sheetfade { from { opacity: 0; } to { opacity: 1; } }
+    .sheet { background: var(--surface); width: 100%; max-width: 520px; border-radius: 18px 18px 0 0; max-height: 76vh; overflow-y: auto; padding: 4px 0 calc(14px + var(--safe-bottom)); animation: sheetup 0.2s cubic-bezier(0.2,0.7,0.2,1); }
+    @keyframes sheetup { from { transform: translateY(100%); } to { transform: none; } }
+    .sheet-title { font-size: 13px; font-weight: 700; color: var(--text-3); padding: 14px 18px 8px; }
+    .sheet-item { display: flex; align-items: center; gap: 12px; padding: 11px 18px; cursor: pointer; }
+    .sheet-item:active { background: var(--accent-soft); }
+    .sheet-item .si-name { font-size: 15px; font-weight: 600; color: var(--text); }
+    .sheet-item .si-handle { font-size: 12px; color: var(--text-3); }
+    .sheet-item .si-check { margin-left: auto; color: var(--accent-strong); font-weight: 800; font-size: 17px; }
+    .sheet-body { padding: 2px 18px 8px; }
+    .link-block { padding: 14px 0; border-top: 1px solid var(--border-light); }
+    .link-block:first-child { border-top: none; }
+    .link-h { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .link-d { font-size: 12px; color: var(--text-3); line-height: 1.7; margin-bottom: 10px; }
+    .link-ta { width: 100%; min-height: 64px; margin-bottom: 8px; font-size: 12px; font-family: monospace; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; resize: vertical; color: var(--text); background: var(--bg); }
+
+    /* ── Filter bar ── */
+    .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+    .filter-select { flex: 1 1 130px; min-width: 0; border: 1.5px solid var(--border); border-radius: 10px; padding: 9px 10px; font-size: 13px; color: var(--text-2); background: var(--surface); cursor: pointer; font-family: inherit; }
+    .filter-toggle { border: 1.5px solid var(--border); border-radius: 999px; padding: 8px 14px; font-size: 12px; color: var(--text-3); background: var(--surface); cursor: pointer; white-space: nowrap; font-family: inherit; }
+    .filter-toggle.active { border-color: #c0704a; background: #c0704a14; color: #c0704a; font-weight: 700; }
+
+    /* ── Pin ── */
+    .card.pinned { background: var(--accent-soft); }
+    .pin-badge { display: inline-flex; align-items: center; font-size: 11px; color: var(--accent-strong); font-weight: 700; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px; }
     .post-btn:disabled { background: var(--text-5); box-shadow: none; cursor: default; }
 
     /* ── Avatar ── */
@@ -324,6 +359,7 @@
 <div id="app"></div>
 <div class="toast" id="toast"></div>
 <div id="lightbox-root"></div>
+<div id="sheet-root"></div>
 
 <script>
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -366,22 +402,17 @@ const ALL_MENTION_WORDS = ["全体", "みんな", "ぜんいん"];
 
 // ── アプリのバージョン ────────────────────────────────────────────────────────
 // 更新するたびに数字を上げる。sw.js の CACHE_NAME も合わせて変えること。
-const APP_VERSION = "1.7.0";
+const APP_VERSION = "2.0.0";
 const VERSION_KEY = "mosaic_version";
 // 今回のバージョンで新しくなったところ（アップデート画面に出ます）
 const WHATS_NEW = [
-  "写真をたくさん貼っても容量オーバーで壊れないよう、画像の保存方法を根本から作り直しました（既存の写真も自動で引き継がれます）",
-  "「使い方ガイド」を追加しました（設定からいつでも開けます）",
-  "兄弟アプリ「Shift」から人格を取り込めるようにしました（はじめの画面でも案内します）",
-  "兄弟アプリ「Shift」へ人格を引き継ぐ書き出し機能を追加しました",
-  "見た目をやさしく・読みやすく整えました",
-  "人格にアイコン画像を設定できるようにしました",
-  "投稿に写真を添付できるようにしました（タップで拡大）",
-  "投稿や人格名で探せる検索を追加しました",
-  "カレンダーから、その日の投稿を見られるようにしました",
-  "他の人格や全体へ「メンション・周知」できるようにしました",
-  "はじめの設定を簡単にしました（IDは空欄でもOK）",
-  "開発者情報と、寄付（BTC・ETH）の画面を追加しました",
+  "写真をたくさん貼っても容量オーバーで壊れないよう、画像の保存方法を根本から作り直しました（これまでの写真も自動で引き継がれます）",
+  "すべての記録をファイルに書き出して保存・復元できる「バックアップ」を追加しました（設定）",
+  "投稿を上部に固定できる「ピン留め」を追加しました",
+  "「書く人格」の切り替えを、一覧から選ぶだけにして分かりやすくしました",
+  "気分でのしぼりこみを、選ぶだけのかんたん操作にしました",
+  "兄弟アプリ「Shift」との連携を、ひとつのボタンにまとめました",
+  "人格の追加などがすぐ反映されるよう、動作を軽くしました",
 ];
 
 // ── State ────────────────────────────────────────────────────────────────────
@@ -1073,7 +1104,7 @@ function filteredPosts() {
     .filter(p => filterMood==='all' || p.mood===filterMood)
     .filter(p => !filterMention || mentionsActive(p))
     .filter(p => !q || postMatchesQuery(p, q))
-    .sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+    .sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0) || new Date(b.timestamp)-new Date(a.timestamp));
 }
 
 // 検索：本文・人格名・ハンドルにヒット
@@ -1101,16 +1132,15 @@ function renderTimeline() {
 
   return `
     <div class="card compose-card">
-      <div class="alter-selector" id="alter-selector">
-        ${state.alters.map(a=>`
-          <div class="pill ${a.id===activeAlterId()?'active':''}"
-               style="${a.id===activeAlterId()?`border-color:${a.color};background:${a.color}20;color:${a.color}`:''};"
-               data-alter-id="${a.id}" onclick="selectAlter('${a.id}')">
-            <div class="pill-dot" style="background:${a.color}"></div>${escHtml(a.name)}
-          </div>`).join('')}
-      </div>
+      <button class="writer-bar" onclick="openWriterPicker()" aria-label="書く人格を切り替え">
+        ${alter ? avatarHTML(alter,36) : ''}
+        <div>
+          <div class="wb-label">書く人格</div>
+          <div class="wb-name">${alter?escHtml(alter.name):'人格を選ぶ'}</div>
+        </div>
+        <span class="wb-chev">切り替え ▾</span>
+      </button>
       <div class="compose-row">
-        ${alter ? avatarHTML(alter,38) : ''}
         <textarea class="compose-textarea" id="compose-text"
           placeholder="${alter?`${escHtml(alter.name)} として書く…`:'人格を選んでください'}"
           rows="3"></textarea>
@@ -1142,28 +1172,16 @@ function renderTimeline() {
       <button class="search-clear" id="search-clear" onclick="clearSearch()" style="display:${searchQuery?'block':'none'}">×</button>
     </div>
 
-    <div class="pill-row">
-      <div class="pill ${filterAlterId==='all'?'active':''}" onclick="setFilterAlter('all')" style="${filterAlterId==='all'?'border-color:var(--accent);background:var(--accent-soft);color:var(--accent-strong);font-weight:700':''}">すべて</div>
-      ${state.alters.map(a=>`
-        <div class="pill ${filterAlterId===a.id?'active':''}"
-             style="${filterAlterId===a.id?`border-color:${a.color};background:${a.color}15;color:${a.color};font-weight:600`:''}"
-             onclick="setFilterAlter('${a.id}')">
-          <div class="pill-dot" style="background:${a.color}"></div>${escHtml(a.name)}
-        </div>`).join('')}
-    </div>
-    <div class="pill-row">
-      <div class="pill ${filterMood==='all'?'active':''}" onclick="setFilterMood('all')" style="${filterMood==='all'?'border-color:var(--accent);background:var(--accent-soft);color:var(--accent-strong);font-weight:700':''}">気分：全て</div>
-      ${MOODS.map(m=>`
-        <div class="pill ${filterMood===m.value?'active':''}" onclick="setFilterMood('${m.value}')"
-             style="${filterMood===m.value?'border-color:#555;background:#5550;color:#333;font-weight:600':''}">
-          ${m.emoji}
-        </div>`).join('')}
-    </div>
-    <div class="pill-row">
-      <div class="pill ${filterMention?'active':''}" onclick="toggleMentionFilter()"
-           style="${filterMention?'border-color:#c0704a;background:#c0704a14;color:#c0704a;font-weight:600':''}">
-        🔔 ${alter?escHtml(alter.name):'自分'} 宛て・周知だけ
-      </div>
+    <div class="filter-bar">
+      <select class="filter-select" onchange="setFilterAlter(this.value)" aria-label="人格でしぼりこむ">
+        <option value="all" ${filterAlterId==='all'?'selected':''}>すべての人格</option>
+        ${state.alters.map(a=>`<option value="${a.id}" ${filterAlterId===a.id?'selected':''}>${escHtml(a.name)}</option>`).join('')}
+      </select>
+      <select class="filter-select" onchange="setFilterMood(this.value)" aria-label="気分でしぼりこむ">
+        <option value="all" ${filterMood==='all'?'selected':''}>すべての気分</option>
+        ${MOODS.map(m=>`<option value="${m.value}" ${filterMood===m.value?'selected':''}>${m.emoji} ${m.label}</option>`).join('')}
+      </select>
+      <button class="filter-toggle ${filterMention?'active':''}" id="mention-toggle" onclick="toggleMentionFilter()">🔔 宛て・周知</button>
     </div>
 
     <div id="timeline-posts">${renderPostsList()}</div>`;
@@ -1178,13 +1196,14 @@ function renderPost(post, opts={}) {
   const showFull = expandedDateId===post.id;
   const isAnnounce = hasAllMention(post.content);
   return `
-    <div class="card accent" style="border-left-color:${alter.color}" id="post-${post.id}">
+    <div class="card accent ${post.pinned?'pinned':''}" style="border-left-color:${alter.color}" id="post-${post.id}">
       <div class="post-header">
         ${avatarHTML(alter,34)}
         <div class="post-meta">
           <div class="post-meta-row">
             <span class="alter-name">${escHtml(alter.name)}</span>
             <span class="alter-handle">@${escHtml(alter.handle)}</span>
+            ${post.pinned ? '<span class="pin-badge">📌 ピン</span>' : ''}
           </div>
         </div>
         ${readOnly
@@ -1209,6 +1228,7 @@ function renderPost(post, opts={}) {
         <span class="mood-badge">${mood?mood.emoji+' '+mood.label:''}</span>
         ${!isEditing && !readOnly?`
         <div class="post-actions">
+          <button class="action-btn" onclick="togglePin('${post.id}')">${post.pinned?'ピン解除':'ピン留め'}</button>
           <button class="action-btn" onclick="startEdit('${post.id}')">編集</button>
           <button class="action-btn" onclick="deletePost('${post.id}')">削除</button>
         </div>`:''}
@@ -1278,9 +1298,54 @@ function selectAlter(id) {
   refreshTimeline();
 }
 
-function setFilterAlter(id) { filterAlterId = id; refreshTimeline(); }
-function setFilterMood(v) { filterMood = v; refreshTimeline(); }
-function toggleMentionFilter() { filterMention = !filterMention; refreshTimeline(); }
+// タイムラインの投稿リストだけ更新（下書きやスクロールを保つ）
+function updateTimelinePosts() {
+  const list = document.getElementById('timeline-posts');
+  if (list) list.innerHTML = renderPostsList();
+}
+function setFilterAlter(id) { filterAlterId = id; updateTimelinePosts(); }
+function setFilterMood(v) { filterMood = v; updateTimelinePosts(); }
+function toggleMentionFilter() {
+  filterMention = !filterMention;
+  const b = document.getElementById('mention-toggle');
+  if (b) b.classList.toggle('active', filterMention);
+  updateTimelinePosts();
+}
+
+// 投稿のピン留め（上部に固定）
+function togglePin(id) {
+  const p = state.posts.find(x => x.id === id);
+  if (!p) return;
+  p.pinned = !p.pinned;
+  updateTimelinePosts();   // 並べ替えだけ即反映
+  saveState();
+  showToast(p.pinned ? 'ピン留めしました' : 'ピンを外しました');
+}
+
+// 「書く人格」を選ぶシート
+function openWriterPicker() {
+  const root = document.getElementById('sheet-root');
+  if (!root) return;
+  const cur = activeAlterId();
+  root.innerHTML = `
+    <div class="sheet-overlay" onclick="if(event.target===this)closeSheet()">
+      <div class="sheet">
+        <div class="sheet-title">どの人格として書きますか？</div>
+        ${state.alters.map(a => `
+          <div class="sheet-item" onclick="pickWriter('${a.id}')">
+            ${avatarHTML(a, 40)}
+            <div>
+              <div class="si-name">${escHtml(a.name)}</div>
+              <div class="si-handle">@${escHtml(a.handle)}</div>
+            </div>
+            ${a.id === cur ? '<span class="si-check">✓</span>' : ''}
+          </div>`).join('')}
+      </div>
+    </div>`;
+  hydrateAllImages();
+}
+function closeSheet() { const r = document.getElementById('sheet-root'); if (r) r.innerHTML = ''; }
+function pickWriter(id) { closeSheet(); selectAlter(id); }
 
 // 検索：入力中は投稿リストだけ更新してフォーカスを保つ
 function applySearch(val) {
@@ -1651,8 +1716,8 @@ function saveAlter() {
   }
   showAlterForm = false;
   alterFormData = {name:'',handle:'',color:PALETTE[0],role:'',avatarImage:''};
+  refreshAlters();   // 先に画面へ反映（保存を待たせない）
   saveState();
-  refreshAlters();
   showToast('保存しました');
 }
 
@@ -1661,8 +1726,8 @@ function deleteAlter(id) {
   const a = state.alters.find(x=>x.id===id);
   if (!confirm(`${a?.name} を削除しますか？`)) return;
   state.alters = state.alters.filter(x=>x.id!==id);
-  saveState();
   refreshAlters();
+  saveState();
 }
 
 function refreshAlters() {
@@ -1778,20 +1843,23 @@ function renderSettings() {
       <div class="settings-desc">データはこのデバイスにのみ保存されます。サーバーへの送信は一切行いません。</div>
       <div class="stat-row"><span class="stat-row-label">総投稿数</span><span class="stat-row-val">${state.posts.length} 件</span></div>
       <div class="stat-row"><span class="stat-row-label">人格数</span><span class="stat-row-val">${state.alters.length} 人</span></div>
+      <div class="stat-row"><span class="stat-row-label">写真</span><span class="stat-row-val">${state.posts.reduce((n,p)=>n+((p.images&&p.images.length)||0),0)} 枚</span></div>
     </div>
 
     <div class="card settings-section">
-      <div class="settings-label">Shiftへ引き継ぐ</div>
-      <div class="settings-desc">兄弟アプリ「Shift」に人格を引き継げます。下のコードをコピーして、Shiftの設定 →「Mosaicから取り込む」に貼り付けてください。</div>
-      <div class="eth-box" id="export-code">${escHtml(buildExportCode())}</div>
-      <button class="btn-secondary" style="width:100%" onclick="copyExportCode()">引き継ぎコードをコピー</button>
+      <div class="settings-label">バックアップ（書き出し・復元）</div>
+      <div class="settings-desc">すべての記録（投稿・写真・人格）を1つのファイルに書き出して保存できます。機種変更や故障に備えて、ときどき書き出しておくと安心です。復元すると、ファイルの内容が今のデータに<strong>追加</strong>されます（同じ記録は重複しません）。</div>
+      <button class="btn-primary" style="width:100%;margin-bottom:8px" onclick="exportBackup()">バックアップを書き出す</button>
+      <label class="btn-secondary" style="display:block;text-align:center;width:100%;cursor:pointer;margin:0">
+        バックアップから復元
+        <input type="file" accept="application/json,.json" hidden onchange="onBackupFilePick(event)" />
+      </label>
     </div>
 
     <div class="card settings-section">
-      <div class="settings-label">Shiftから取り込む</div>
-      <div class="settings-desc">兄弟アプリ「Shift」の設定 →「Mosaicへ引き継ぐ」でコピーしたコードを、下に貼り付けてください。人格リストを置きかえます。</div>
-      <textarea id="shift-import-code" style="width:100%;min-height:72px;margin:10px 0;font-size:12px;font-family:monospace;border:1px solid var(--border);border-radius:8px;padding:8px 10px;resize:vertical;color:var(--text);background:var(--bg)" placeholder="引き継ぎコードをここに貼り付け"></textarea>
-      <button class="btn-primary" style="width:100%" onclick="importFromCode()">取り込む</button>
+      <div class="settings-label">Shift と連携</div>
+      <div class="settings-desc">兄弟アプリ「Shift」（いまフロントにいる人格の管理）と、人格リストを行き来できます。「送る」「受け取る」をひとつにまとめました。</div>
+      <button class="btn-secondary" style="width:100%" onclick="openShiftLink()">Shift と連携する</button>
     </div>
 
     <div class="card settings-section">
@@ -1912,7 +1980,7 @@ function buildExportCode() {
   try { return encodeLink(JSON.stringify(payload)); } catch { return ''; }
 }
 function copyExportCode() {
-  const code = (document.getElementById('export-code') || {}).textContent || '';
+  const code = buildExportCode();
   const done = () => showToast('引き継ぎコードをコピーしました');
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(code).then(done).catch(() => fallbackCopy(code, done));
@@ -1950,13 +2018,40 @@ function applyLinkPayload(payload) {
 function importFromCode() {
   const inp = document.getElementById('shift-import-code');
   const payload = parseLinkCode(inp ? inp.value.trim() : '');
-  if (!payload) return;
-  if (!confirm('Shiftの人格データ（' + payload.alters.length + '件）を取り込みます。今のMosaicの人格リストは置きかえられます。続けますか？')) return;
+  if (!payload) return false;
+  if (!confirm('Shiftの人格データ（' + payload.alters.length + '件）を取り込みます。今のMosaicの人格リストは置きかえられます。続けますか？')) return false;
   applyLinkPayload(payload);
   if (inp) inp.value = '';
   const s = document.getElementById('tab-settings');
   if (s) s.innerHTML = renderSettings();
   showToast(state.alters.length + '人格を取り込みました');
+  return true;
+}
+
+// Shift連携シート（送る・受け取るをひとつにまとめた入口）
+function openShiftLink() {
+  const root = document.getElementById('sheet-root');
+  if (!root) return;
+  root.innerHTML = `
+    <div class="sheet-overlay" onclick="if(event.target===this)closeSheet()">
+      <div class="sheet">
+        <div class="sheet-title">Shift と連携</div>
+        <div class="sheet-body">
+          <div class="link-block">
+            <div class="link-h">Shift へ送る</div>
+            <div class="link-d">この端末の人格リストを Shift に渡します。コードをコピーして、Shift を開き「Mosaicから取り込む」に貼り付けてください。</div>
+            <button class="btn-primary" style="width:100%;margin-bottom:8px" onclick="copyExportCode()">引き継ぎコードをコピー</button>
+            <a class="btn-secondary" style="display:block;text-align:center;text-decoration:none;width:100%" href="https://shift.xdcyw.net" target="_blank" rel="noopener">Shift を開く →</a>
+          </div>
+          <div class="link-block">
+            <div class="link-h">Shift から受け取る</div>
+            <div class="link-d">Shift の「Mosaicへ引き継ぐ」でコピーしたコードを貼り付けて取り込みます（今の人格リストは置きかえられます）。</div>
+            <textarea id="shift-import-code" class="link-ta" placeholder="引き継ぎコードをここに貼り付け"></textarea>
+            <button class="btn-primary" style="width:100%" onclick="if(importFromCode())closeSheet()">取り込む</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
 }
 // 初期起動：引き継ぎコードで取り込んで始める
 function openCodeImport()  { showCodeImport = true;  render(); }
@@ -1980,6 +2075,92 @@ function saveSystemName() {
   saveState();
   document.querySelector('.nav-title').textContent = state.systemName;
   showToast('システム名を保存しました');
+}
+
+// ── バックアップ（全データの書き出し・復元） ─────────────────────────────────
+async function exportBackup() {
+  try {
+    showToast('書き出しています…');
+    // state が参照している画像（IDB内）を集めて base64 にする
+    const refs = new Set();
+    state.posts.forEach(p => (p.images || []).forEach(v => { if (v && !isDataUrl(v)) refs.add(v); }));
+    state.alters.forEach(a => { if (a.avatarImage && !isDataUrl(a.avatarImage)) refs.add(a.avatarImage); });
+    const images = {};
+    for (const id of refs) {
+      try { const blob = await idbGet(id); if (blob) images[id] = await blobToDataURL(blob); } catch {}
+    }
+    const data = {
+      app: 'mosaic', type: 'backup', version: APP_VERSION,
+      exportedAt: new Date().toISOString(),
+      state: {
+        systemName: state.systemName,
+        agreedTermsVersion: state.agreedTermsVersion,
+        alters: state.alters,
+        posts: state.posts.map(p => ({ ...p, timestamp: new Date(p.timestamp).toISOString() })),
+      },
+      images,
+    };
+    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const d = new Date();
+    const stamp = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+    const a = document.createElement('a');
+    a.href = url; a.download = `mosaic-backup-${stamp}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    showToast('バックアップを書き出しました');
+  } catch { showToast('書き出しに失敗しました'); }
+}
+
+function onBackupFilePick(ev) {
+  const file = (ev.target.files || [])[0];
+  ev.target.value = '';
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    let data;
+    try { data = JSON.parse(reader.result); } catch { showToast('このファイルは読み込めませんでした'); return; }
+    if (!data || data.app !== 'mosaic' || !data.state) { showToast('Mosaicのバックアップファイルではありません'); return; }
+    importBackup(data);
+  };
+  reader.onerror = () => showToast('読み込みに失敗しました');
+  reader.readAsText(file);
+}
+
+async function importBackup(data) {
+  const bs = data.state || {};
+  const inAlters = Array.isArray(bs.alters) ? bs.alters : [];
+  const inPosts  = Array.isArray(bs.posts)  ? bs.posts  : [];
+  const images = data.images || {};
+  const newAlters = inAlters.filter(a => !state.alters.some(x => x.id === a.id)).length;
+  const newPosts  = inPosts.filter(p => !state.posts.some(x => x.id === p.id)).length;
+  if (!confirm(`バックアップを読み込みます。\n投稿 ${newPosts} 件、人格 ${newAlters} 人を追加します（同じものは重複しません）。続けますか？`)) return;
+  showToast('復元しています…');
+
+  if (idbOK) {
+    // 画像を IndexedDB に戻す（すでにあるものは触らない）
+    for (const id of Object.keys(images)) {
+      try { if (!(await idbGet(id))) await idbPut(id, await (await fetch(images[id])).blob()); } catch {}
+    }
+  } else {
+    // IndexedDB非対応端末：画像を state に直接戻す（従来方式）
+    inPosts.forEach(p => { if (Array.isArray(p.images)) p.images = p.images.map(v => images[v] || v); });
+    inAlters.forEach(a => { if (a.avatarImage && images[a.avatarImage]) a.avatarImage = images[a.avatarImage]; });
+  }
+
+  inAlters.forEach(a => { if (!state.alters.some(x => x.id === a.id)) state.alters.push(a); });
+  inPosts.forEach(p => { if (!state.posts.some(x => x.id === p.id)) state.posts.push({ ...p, timestamp: new Date(p.timestamp) }); });
+  state.posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+  if (!state.systemName && bs.systemName) state.systemName = bs.systemName;
+  if (typeof bs.agreedTermsVersion === 'number') state.agreedTermsVersion = Math.max(state.agreedTermsVersion || 0, bs.agreedTermsVersion);
+  if (!state.initialized) state.initialized = true;
+
+  saveState();
+  try { await preloadAvatars(); } catch {}
+  render();
+  hydrateAllImages();
+  showToast(`復元しました（投稿 ${newPosts} 件・人格 ${newAlters} 人を追加）`);
 }
 
 function resetApp() {
