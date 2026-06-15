@@ -216,6 +216,10 @@
     .alter-card-role { font-size: 12px; color: var(--text-3); margin-top: 2px; }
     .alter-card-count { font-size: 11px; color: var(--text-4); margin-top: 3px; }
     .alter-card-btns { display: flex; flex-direction: column; gap: 6px; }
+    .reorder-btn { padding: 7px 12px; display: inline-flex; align-items: center; justify-content: center; }
+    .reorder-btn svg { width: 16px; height: 16px; display: block; }
+    .btn-ghost:disabled { opacity: 0.32; cursor: default; }
+    .reorder-hint { font-size: 12px; color: var(--text-3); line-height: 1.6; background: var(--accent-soft); border-radius: 10px; padding: 9px 12px; margin-bottom: 12px; }
 
     /* ── Stats ── */
     .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
@@ -374,6 +378,8 @@ const MOODS = [
   { value:"numb",    emoji:"🌫️", label:"感覚なし" },
 ];
 const STORAGE_KEY = "mosaic_v1";
+const ICON_UP   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 14 12 8 18 14"/></svg>';
+const ICON_DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 10 12 16 18 10"/></svg>';
 
 // ── 開発者情報・寄付設定 ──────────────────────────────────────────────────────
 // ↓↓↓ ここを自分の情報に書き換えてください ↓↓↓
@@ -401,10 +407,11 @@ const ALL_MENTION_WORDS = ["全体", "みんな", "ぜんいん"];
 
 // ── アプリのバージョン ────────────────────────────────────────────────────────
 // 更新するたびに数字を上げる。sw.js の CACHE_NAME も合わせて変えること。
-const APP_VERSION = "2.0.1";
+const APP_VERSION = "2.1.0";
 const VERSION_KEY = "mosaic_version";
 // 今回のバージョンで新しくなったところ（アップデート画面に出ます）
 const WHATS_NEW = [
+  "人格一覧を「並び替え」できるようにしました（順番は投稿の人格選び・絞り込みにも反映されます）",
   "見た目を整えました（角丸や線の不ぞろいを統一・作成画面の宛先まわりをすっきり・検索アイコンを刷新）",
   "写真をたくさん貼っても容量オーバーで壊れないよう、画像の保存方法を根本から作り直しました（これまでの写真も自動で引き継がれます）",
   "すべての記録をファイルに書き出して保存・復元できる「バックアップ」を追加しました（設定）",
@@ -821,6 +828,7 @@ let calSelectedKey = null;      // "YYYY-M-D"
 let editingPostId = null;
 let showAlterForm = false;
 let editingAlterId = null;
+let reorderAltersMode = false;
 let setupStep = 1;
 let setupData = { systemName:'', alterName:'', alterHandle:'', alterColor: PALETTE[0], alterRole:'' };
 let expandedDateId = null;
@@ -1600,13 +1608,14 @@ function renderAlters() {
   return `
     <div class="section-header">
       <div class="section-title">人格一覧</div>
-      <button class="${showAlterForm&&!editingAlterId?'btn-secondary':'btn-primary'}" style="padding:7px 14px;font-size:13px;width:auto"
-        onclick="toggleAlterForm()">
-        ${showAlterForm&&!editingAlterId?'キャンセル':'+ 追加'}
-      </button>
+      <div style="display:flex;gap:8px">
+        ${state.alters.length>1?`<button class="btn-secondary" style="padding:7px 14px;font-size:13px;width:auto" onclick="toggleReorderAlters()">${reorderAltersMode?'完了':'並び替え'}</button>`:''}
+        ${!reorderAltersMode?`<button class="${showAlterForm&&!editingAlterId?'btn-secondary':'btn-primary'}" style="padding:7px 14px;font-size:13px;width:auto" onclick="toggleAlterForm()">${showAlterForm&&!editingAlterId?'キャンセル':'+ 追加'}</button>`:''}
+      </div>
     </div>
-    ${showAlterForm ? renderAlterForm() : ''}
-    ${state.alters.map(a=>renderAlterCard(a)).join('')}`;
+    ${reorderAltersMode?`<div class="reorder-hint">▲▼ で並び順を変えられます。この順番が、投稿の人格選び・絞り込みにも反映されます。</div>`:''}
+    ${showAlterForm && !reorderAltersMode ? renderAlterForm() : ''}
+    ${state.alters.map((a,i)=>renderAlterCard(a,i)).join('')}`;
 }
 
 function renderAlterForm() {
@@ -1655,8 +1664,14 @@ function clearAlterAvatar() {
   refreshAlters();
 }
 
-function renderAlterCard(a) {
+function renderAlterCard(a, i) {
   const count = state.posts.filter(p=>p.alterId===a.id).length;
+  const last = state.alters.length - 1;
+  const btns = reorderAltersMode
+    ? `<button class="btn-ghost reorder-btn" ${i===0?'disabled':''} onclick="moveAlter('${a.id}',-1)" aria-label="上へ">${ICON_UP}</button>
+       <button class="btn-ghost reorder-btn" ${i===last?'disabled':''} onclick="moveAlter('${a.id}',1)" aria-label="下へ">${ICON_DOWN}</button>`
+    : `<button class="btn-ghost" onclick="startEditAlter('${a.id}')">編集</button>
+       ${state.alters.length>1?`<button class="btn-ghost" style="color:var(--text-4)" onclick="deleteAlter('${a.id}')">削除</button>`:''}`;
   return `
     <div class="card accent" style="border-left-color:${a.color}">
       <div class="alter-card-row">
@@ -1667,10 +1682,7 @@ function renderAlterCard(a) {
           ${a.role?`<div class="alter-card-role">${escHtml(a.role)}</div>`:''}
           <div class="alter-card-count">投稿 ${count} 件</div>
         </div>
-        <div class="alter-card-btns">
-          <button class="btn-ghost" onclick="startEditAlter('${a.id}')">編集</button>
-          ${state.alters.length>1?`<button class="btn-ghost" style="color:var(--text-4)" onclick="deleteAlter('${a.id}')">削除</button>`:''}
-        </div>
+        <div class="alter-card-btns">${btns}</div>
       </div>
     </div>`;
 }
@@ -1744,6 +1756,23 @@ function deleteAlter(id) {
   if (!confirm(`${a?.name} を削除しますか？`)) return;
   state.alters = state.alters.filter(x=>x.id!==id);
   refreshAlters();
+  saveState();
+}
+
+function toggleReorderAlters() {
+  reorderAltersMode = !reorderAltersMode;
+  if (reorderAltersMode) { showAlterForm = false; editingAlterId = null; }
+  refreshAlters();
+}
+
+function moveAlter(id, dir) {
+  const i = state.alters.findIndex(a => a.id === id);
+  if (i < 0) return;
+  const j = i + dir;
+  if (j < 0 || j >= state.alters.length) return;
+  const arr = state.alters;
+  const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  refreshAlters();   // 先に反映（待たせない）
   saveState();
 }
 
