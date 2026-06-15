@@ -1029,8 +1029,6 @@ function selectSetupColor(c) {
 
 function completeSetup() {
   if (!setupData.alterName.trim()) return;
-  // システム名は決めさせず、既定で「Mosaic」。設定でいつでも変えられる
-  state.systemName = state.systemName && state.systemName.trim() ? state.systemName : 'Mosaic';
   state.alters = [{
     id: randomId(), name: setupData.alterName.trim(),
     handle: setupData.alterHandle.trim() || genHandle(setupData.alterName), color: setupData.alterColor,
@@ -1048,7 +1046,7 @@ function renderApp() {
   const showBanner = !installed && !installBannerDismissed && !isIOS();
   return `
     <nav class="nav">
-      <span class="nav-title">${escHtml(state.systemName)}</span>
+      <span class="nav-title">Mosaic</span>
       <div class="nav-tabs">
         <button class="nav-tab" data-tab="timeline">タイムライン</button>
         <button class="nav-tab" data-tab="calendar">カレンダー</button>
@@ -1833,12 +1831,6 @@ function renderSettings() {
     </div>`}
 
     <div class="card settings-section">
-      <div class="settings-label">システム名</div>
-      <input type="text" id="settings-sysname" value="${escHtml(state.systemName)}" maxlength="30"/>
-      <button class="btn-primary" style="margin-top:12px" onclick="saveSystemName()">保存</button>
-    </div>
-
-    <div class="card settings-section">
       <div class="settings-label">データについて</div>
       <div class="settings-desc">データはこのデバイスにのみ保存されます。サーバーへの送信は一切行いません。</div>
       <div class="stat-row"><span class="stat-row-label">総投稿数</span><span class="stat-row-val">${state.posts.length} 件</span></div>
@@ -2066,15 +2058,6 @@ function doCodeImport() {
   showCodeImport = false;
   render();
   showToast(state.alters.length + '人格を取り込みました');
-}
-
-function saveSystemName() {
-  const inp = document.getElementById('settings-sysname');
-  if (!inp?.value.trim()) return;
-  state.systemName = inp.value.trim();
-  saveState();
-  document.querySelector('.nav-title').textContent = state.systemName;
-  showToast('システム名を保存しました');
 }
 
 // ── バックアップ（全データの書き出し・復元） ─────────────────────────────────
