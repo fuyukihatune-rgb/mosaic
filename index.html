@@ -366,10 +366,11 @@ const ALL_MENTION_WORDS = ["全体", "みんな", "ぜんいん"];
 
 // ── アプリのバージョン ────────────────────────────────────────────────────────
 // 更新するたびに数字を上げる。sw.js の CACHE_NAME も合わせて変えること。
-const APP_VERSION = "1.6.0";
+const APP_VERSION = "1.7.0";
 const VERSION_KEY = "mosaic_version";
 // 今回のバージョンで新しくなったところ（アップデート画面に出ます）
 const WHATS_NEW = [
+  "写真をたくさん貼っても容量オーバーで壊れないよう、画像の保存方法を根本から作り直しました（既存の写真も自動で引き継がれます）",
   "「使い方ガイド」を追加しました（設定からいつでも開けます）",
   "兄弟アプリ「Shift」から人格を取り込めるようにしました（はじめの画面でも案内します）",
   "兄弟アプリ「Shift」へ人格を引き継ぐ書き出し機能を追加しました",
@@ -404,7 +405,7 @@ function loadState() {
 
 function saveState() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); return true; }
-  catch (e) { showToast('保存できませんでした。画像が多いと容量がいっぱいになることがあります'); return false; }
+  catch (e) { showToast('保存できませんでした。端末の空き容量が不足しているかもしれません'); return false; }
 }
 
 function randomId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
@@ -420,9 +421,69 @@ function genHandle(name, excludeId) {
   return base + n;
 }
 
-// ── Image helper ─────────────────────────────────────────────────────────────
-// 画像ファイルを縮小して data URL（文字列）にする。端末の容量を使いすぎないため。
-function fileToResizedDataURL(file, maxDim, quality) {
+// ── Image store（IndexedDB） ──────────────────────────────────────────────────
+// 画像の中身（バイナリ）は localStorage ではなく IndexedDB に入れる。
+// localStorage は約5MBしかなく、写真を base64 で入れるとすぐ容量オーバーで壊れていた。
+// IndexedDB は Blob をそのまま保存でき、容量も桁違いに大きい。
+// localStorage 側（state）には短い画像ID（"img_xxxx"）だけを持つ。
+const IDB_NAME = 'mosaic';
+const IDB_STORE = 'images';
+const BLANK_IMG = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+let idbOK = (typeof indexedDB !== 'undefined' && indexedDB !== null);
+let _db = null;
+const imgUrlCache = new Map(); // 画像ID → object URL（表示用。同じIDは使い回す）
+
+function isDataUrl(v) { return typeof v === 'string' && v.slice(0, 5) === 'data:'; }
+
+function idbOpen() {
+  return new Promise((resolve, reject) => {
+    if (_db) { resolve(_db); return; }
+    if (!idbOK) { reject(new Error('no indexeddb')); return; }
+    let req;
+    try { req = indexedDB.open(IDB_NAME, 1); } catch (e) { idbOK = false; reject(e); return; }
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(IDB_STORE)) db.createObjectStore(IDB_STORE);
+    };
+    req.onsuccess = () => { _db = req.result; resolve(_db); };
+    req.onerror = () => { idbOK = false; reject(req.error); };
+  });
+}
+function idbPut(id, blob) {
+  return idbOpen().then(db => new Promise((res, rej) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).put(blob, id);
+    tx.oncomplete = () => res(id);
+    tx.onerror = () => rej(tx.error);
+  }));
+}
+function idbGet(id) {
+  return idbOpen().then(db => new Promise((res, rej) => {
+    const tx = db.transaction(IDB_STORE, 'readonly');
+    const r = tx.objectStore(IDB_STORE).get(id);
+    r.onsuccess = () => res(r.result || null);
+    r.onerror = () => rej(r.error);
+  }));
+}
+function idbDel(id) {
+  return idbOpen().then(db => new Promise((res) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    tx.objectStore(IDB_STORE).delete(id);
+    tx.oncomplete = () => res();
+    tx.onerror = () => res();
+  })).catch(() => {});
+}
+function idbKeys() {
+  return idbOpen().then(db => new Promise((res, rej) => {
+    const tx = db.transaction(IDB_STORE, 'readonly');
+    const r = tx.objectStore(IDB_STORE).getAllKeys();
+    r.onsuccess = () => res(r.result || []);
+    r.onerror = () => rej(r.error);
+  }));
+}
+
+// 画像ファイル → 縮小した JPEG Blob
+function fileToResizedBlob(file, maxDim, quality) {
   return new Promise((resolve, reject) => {
     if (!file || !/^image\//.test(file.type)) { reject(new Error('画像ではありません')); return; }
     const reader = new FileReader();
@@ -437,8 +498,10 @@ function fileToResizedDataURL(file, maxDim, quality) {
         const canvas = document.createElement('canvas');
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        try { resolve(canvas.toDataURL('image/jpeg', quality || 0.82)); }
-        catch (err) { reject(err); }
+        canvas.toBlob(
+          b => b ? resolve(b) : reject(new Error('画像の変換に失敗しました')),
+          'image/jpeg', quality || 0.82
+        );
       };
       img.onerror = () => reject(new Error('画像を読み込めませんでした'));
       img.src = reader.result;
@@ -446,6 +509,123 @@ function fileToResizedDataURL(file, maxDim, quality) {
     reader.onerror = () => reject(new Error('読み込みに失敗しました'));
     reader.readAsDataURL(file);
   });
+}
+function blobToDataURL(blob) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = () => rej(r.error);
+    r.readAsDataURL(blob);
+  });
+}
+
+// 画像を保存して「参照」を返す。IndexedDBが使えればID（img_xxx）、
+// 使えなければ従来どおり data URL 文字列を返す（古い端末向けの保険）。
+async function storeImageFile(file, maxDim, quality) {
+  const blob = await fileToResizedBlob(file, maxDim, quality);
+  if (!idbOK) return await blobToDataURL(blob);
+  const id = 'img_' + randomId();
+  try {
+    await idbPut(id, blob);
+  } catch {
+    idbOK = false;
+    return await blobToDataURL(blob);
+  }
+  imgUrlCache.set(id, URL.createObjectURL(blob));
+  return id;
+}
+
+// 参照（IDまたはdata URL）→ 表示用URL（キャッシュ済みのときだけ同期で返す）
+function imgUrlSync(ref) {
+  if (!ref) return '';
+  if (isDataUrl(ref)) return ref;
+  return imgUrlCache.get(ref) || '';
+}
+// <img data-img="参照"> を実際に表示できるようにする
+function hydrateImg(img) {
+  if (img.getAttribute('data-hydrated')) return;
+  const ref = img.getAttribute('data-img');
+  if (!ref) return;
+  img.setAttribute('data-hydrated', '1');
+  if (isDataUrl(ref)) { img.src = ref; return; }
+  const cached = imgUrlCache.get(ref);
+  if (cached) { img.src = cached; return; }
+  idbGet(ref).then(blob => {
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
+    imgUrlCache.set(ref, url);
+    img.src = url;
+  }).catch(() => {});
+}
+function hydrateAllImages(root) {
+  (root || document).querySelectorAll('img[data-img]:not([data-hydrated])').forEach(hydrateImg);
+}
+function setupImageObserver() {
+  if (!('MutationObserver' in window)) return;
+  const obs = new MutationObserver(muts => {
+    for (const m of muts) {
+      for (const n of m.addedNodes) {
+        if (n.nodeType !== 1) continue;
+        if (n.matches && n.matches('img[data-img]')) hydrateImg(n);
+        if (n.querySelectorAll) n.querySelectorAll('img[data-img]:not([data-hydrated])').forEach(hydrateImg);
+      }
+    }
+  });
+  obs.observe(document.body, { childList: true, subtree: true });
+}
+
+// 画像参照を完全に削除（メモリのobject URLと、IndexedDBの実体）
+function revokeImg(ref) {
+  const u = imgUrlCache.get(ref);
+  if (u) { try { URL.revokeObjectURL(u); } catch {} imgUrlCache.delete(ref); }
+}
+function deleteImageRef(ref) {
+  if (!ref || isDataUrl(ref)) return;
+  revokeImg(ref);
+  if (idbOK) idbDel(ref);
+}
+
+// 起動時：人格アイコンの表示URLを先に用意（同期表示できるように）
+async function preloadAvatars() {
+  for (const a of state.alters) {
+    const ref = a.avatarImage;
+    if (ref && !isDataUrl(ref) && !imgUrlCache.has(ref)) {
+      try { const blob = await idbGet(ref); if (blob) imgUrlCache.set(ref, URL.createObjectURL(blob)); } catch {}
+    }
+  }
+}
+// 起動時：古い data URL（localStorageの中の巨大な画像）を IndexedDB へ移す。一度だけ。
+async function migrateImagesToIDB() {
+  if (!idbOK) return;
+  let changed = false;
+  async function conv(dataUrl) {
+    const blob = await (await fetch(dataUrl)).blob();
+    const id = 'img_' + randomId();
+    await idbPut(id, blob);
+    return id;
+  }
+  for (const p of state.posts) {
+    if (Array.isArray(p.images)) {
+      for (let i = 0; i < p.images.length; i++) {
+        if (isDataUrl(p.images[i])) { try { p.images[i] = await conv(p.images[i]); changed = true; } catch {} }
+      }
+    }
+  }
+  for (const a of state.alters) {
+    if (isDataUrl(a.avatarImage)) { try { a.avatarImage = await conv(a.avatarImage); changed = true; } catch {} }
+  }
+  if (changed) saveState(); // 画像が抜けて軽くなった state を保存し、localStorageを解放
+}
+// 起動時：どの投稿・人格からも参照されていない画像を掃除（投稿せず離れた添付など）
+async function gcOrphanImages() {
+  if (!idbOK) return;
+  try {
+    const used = new Set();
+    state.posts.forEach(p => (p.images || []).forEach(v => { if (v && !isDataUrl(v)) used.add(v); }));
+    state.alters.forEach(a => { if (a.avatarImage && !isDataUrl(a.avatarImage)) used.add(a.avatarImage); });
+    const keys = await idbKeys();
+    for (const k of keys) if (!used.has(k)) await idbDel(k);
+  } catch {}
 }
 
 function timeAgo(date) {
@@ -471,8 +651,9 @@ function showToast(msg) {
 
 // ── Avatar HTML ──────────────────────────────────────────────────────────────
 function avatarHTML(alter, size=36) {
-  if (alter.avatarImage) {
-    return `<div class="avatar" style="width:${size}px;height:${size}px;background-image:url('${alter.avatarImage}');background-size:cover;background-position:center"></div>`;
+  const url = imgUrlSync(alter.avatarImage);
+  if (url) {
+    return `<div class="avatar" style="width:${size}px;height:${size}px;background-image:url('${url}');background-size:cover;background-position:center"></div>`;
   }
   return `<div class="avatar" style="width:${size}px;height:${size}px;background:${alter.color};font-size:${Math.round(size*0.38)}px">${escHtml(alter.name.slice(0,1))}</div>`;
 }
@@ -601,7 +782,7 @@ let showTermsView = false;
 let updateInfo = null; // 既存ユーザーが更新したとき { from, to } が入る
 let showCodeImport = false; // 初期起動でコード取り込み画面を出しているとき true
 let showHelpView = false; // 設定から使い方を開いているとき true
-let composeImages = []; // 投稿前に添付した画像（data URL）の一時置き場
+let composeImages = []; // 投稿前に添付した画像の参照（画像ID）の一時置き場
 const _now = new Date();
 let calYear = _now.getFullYear();
 let calMonth = _now.getMonth(); // 0-11
@@ -1021,7 +1202,7 @@ function renderPost(post, opts={}) {
         ${post.content?`<p class="post-body">${renderContentWithMentions(post.content)}</p>`:''}`}
       ${post.images && post.images.length ? `
         <div class="post-images">
-          ${post.images.map((src,i)=>`<img class="post-image" src="${src}" alt="画像" onclick="openLightbox('${post.id}',${i})" />`).join('')}
+          ${post.images.map((ref,i)=>`<img class="post-image" src="${BLANK_IMG}" data-img="${escHtml(ref)}" loading="lazy" decoding="async" alt="画像" onclick="openLightbox('${post.id}',${i})" />`).join('')}
         </div>` : ''}
       <div class="post-footer">
         ${isAnnounce?`<span class="announce-badge">📢 周知</span>`:''}
@@ -1058,9 +1239,9 @@ function updatePostBtn() {
 // ── Compose images ───────────────────────────────────────────────────────────
 function renderComposeImages() {
   if (!composeImages.length) return '';
-  return composeImages.map((src,i)=>`
+  return composeImages.map((ref,i)=>`
     <div class="thumb">
-      <img src="${src}" alt="添付画像" />
+      <img src="${BLANK_IMG}" data-img="${escHtml(ref)}" alt="添付画像" />
       <button class="thumb-remove" onclick="removeComposeImage(${i})">×</button>
     </div>`).join('');
 }
@@ -1078,15 +1259,17 @@ async function onComposeImagePick(ev) {
   for (const f of files) {
     if (composeImages.length >= MAX) { showToast(`画像は${MAX}枚までです`); break; }
     try {
-      const dataURL = await fileToResizedDataURL(f, 1200, 0.8);
-      composeImages.push(dataURL);
+      const ref = await storeImageFile(f, 1200, 0.8);
+      composeImages.push(ref);
       updateComposeImagesUI();
     } catch { showToast('この画像は読み込めませんでした'); }
   }
 }
 
 function removeComposeImage(i) {
+  const ref = composeImages[i];
   composeImages.splice(i, 1);
+  deleteImageRef(ref);
   updateComposeImagesUI();
 }
 
@@ -1202,6 +1385,8 @@ function saveEdit(id) {
 
 function deletePost(id) {
   if (!confirm('削除しますか？')) return;
+  const post = state.posts.find(p=>p.id===id);
+  if (post && Array.isArray(post.images)) post.images.forEach(deleteImageRef);
   state.posts = state.posts.filter(p=>p.id!==id);
   saveState();
   refreshTimeline();
@@ -1221,7 +1406,7 @@ function openLightbox(postId, index) {
   root.innerHTML = `
     <div class="lightbox" onclick="closeLightbox()">
       <button class="lightbox-close" onclick="closeLightbox()">×</button>
-      <img src="${post.images[index]}" alt="画像" onclick="event.stopPropagation()" />
+      <img src="${BLANK_IMG}" data-img="${escHtml(post.images[index])}" alt="画像" onclick="event.stopPropagation()" />
     </div>`;
 }
 function closeLightbox() {
@@ -1378,7 +1563,7 @@ async function onAlterAvatarPick(ev) {
   ev.target.value = '';
   if (!file) return;
   try {
-    alterFormData.avatarImage = await fileToResizedDataURL(file, 240, 0.85);
+    alterFormData.avatarImage = await storeImageFile(file, 240, 0.85);
     refreshAlters();
   } catch { showToast('この画像は読み込めませんでした'); }
 }
@@ -1800,6 +1985,13 @@ function saveSystemName() {
 function resetApp() {
   if (!confirm('すべてのデータを削除してリセットしますか？この操作は取り消せません。')) return;
   localStorage.removeItem(STORAGE_KEY);
+  // 画像（IndexedDB と表示用URL）も全部消す
+  for (const u of imgUrlCache.values()) { try { URL.revokeObjectURL(u); } catch {} }
+  imgUrlCache.clear();
+  if (idbOK) {
+    try { if (_db) { _db.close(); _db = null; } } catch {}
+    try { indexedDB.deleteDatabase(IDB_NAME); } catch {}
+  }
   state = { initialized:false, systemName:'', alters:[], posts:[], agreedTermsVersion:0 };
   setupStep = 1;
   setupData = {systemName:'',alterName:'',alterHandle:'',alterColor:PALETTE[0],alterRole:''};
@@ -1816,7 +2008,15 @@ function escHtml(str) {
 // ── Boot ─────────────────────────────────────────────────────────────────────
 loadState();
 checkVersion();
-render();
+(async function boot() {
+  try { await idbOpen(); } catch { idbOK = false; }
+  try { await migrateImagesToIDB(); } catch {}   // 古い画像をlocalStorageからIDBへ（初回のみ）
+  try { await preloadAvatars(); } catch {}        // アイコンを先に用意
+  render();
+  setupImageObserver();                           // 以降に描画される画像を自動で表示
+  hydrateAllImages();                             // 最初の画面の画像を表示
+  gcOrphanImages();                               // 迷子の画像を掃除（待たない）
+})();
 
 // ── Service Worker（自動アップデート対応） ───────────────────────────────────
 if ('serviceWorker' in navigator) {
