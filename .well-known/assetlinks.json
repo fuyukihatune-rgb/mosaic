@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "net.xdcyw.mosaic",
+    "sha256_cert_fingerprints": ["96:43:26:3C:99:02:3D:75:32:8C:BF:11:1D:6D:D6:27:B1:95:35:D2:3E:2B:E0:2F:50:9A:9A:F7:C9:A7:33:B7"]
+  }
+}]
