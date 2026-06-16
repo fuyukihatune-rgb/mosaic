@@ -1,5 +1,5 @@
 // バージョンを上げるたびに CACHE_NAME も変えること（= 古いキャッシュが必ず捨てられる）
-const CACHE_NAME = 'mosaic-2.1.0';
+const CACHE_NAME = 'mosaic-2.2.0';
 const ASSETS = [
   './',
   './index.html',

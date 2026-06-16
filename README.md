@@ -105,3 +105,10 @@ https://<ユーザー名>.github.io/mosaic/
 - 気分の種類: `const MOODS = [...]`
 - 全体メンションに使う言葉: `const ALL_MENTION_WORDS = [...]`
 - プライバシー・規約の本文: `renderTermsBody()`（変更したら `TERMS_VERSION` を +1 すると再同意を促せます）
+
+## アップデート履歴
+
+## 2026-06-16
+- OGタグ追加（og:title / og:description / og:image / og:url / og:type / twitter:card）
+- キーボードアクセシビリティ改善（:focus-visible スタイル追加）
+- manifest.json 整備（scope・categories・orientation 修正）
