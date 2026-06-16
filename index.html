@@ -362,7 +362,11 @@
       .nav-title { font-size: 15px; }
       .pill { padding: 5px 11px; }
     }
-  </style>
+  
+  /* キーボードアクセシビリティ */
+  :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; border-radius: 4px; }
+  button:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+</style>
 </head>
 <body>
 <div id="app"></div>
