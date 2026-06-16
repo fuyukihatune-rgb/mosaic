@@ -1170,6 +1170,7 @@ function renderTimeline() {
           <input type="file" accept="image/*" multiple hidden onchange="onComposeImagePick(event)" />
         </label>
         <select class="mood-select" id="compose-mood">
+          <option value="">🫥 気分（任意）</option>
           ${MOODS.map(m=>`<option value="${m.value}">${m.emoji} ${m.label}</option>`).join('')}
         </select>
         <button class="post-btn" id="post-btn" disabled onclick="submitPost()">投稿</button>
@@ -1448,7 +1449,7 @@ function submitPost() {
   if (!text && !images.length) return; // 文章も画像も無ければ投稿しない
   state.posts.unshift({
     id: randomId(), alterId: activeAlterId(),
-    content: text, mood: mood?.value||'neutral',
+    content: text, mood: mood?.value||'',
     images: images,
     timestamp: new Date()
   });
